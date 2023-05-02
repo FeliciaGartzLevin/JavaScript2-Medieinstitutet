@@ -1,1 +1,14 @@
 @import "bootstrap/scss/bootstrap";
+
+body {
+	background: rgb(34, 34, 34);
+}
+
+.todolist {
+	.done {
+		.todo-title {
+			font-style: italic;
+			text-decoration: line-through;
+		}
+	}
+}

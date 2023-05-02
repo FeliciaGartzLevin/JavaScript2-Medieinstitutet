@@ -16,3 +16,31 @@ https://react.dev/learn/writing-markup-with-jsx
 
 ## 02-02-react-simple-todos
 Workshop
+
+useEffect() - kan välja efter vilka förändringar den ska renderas, (t ex ändra title enbart efter todos har förändrats/omrenderats, inte efter att något annat på sidan har renderats om (inte när ngt lagts till, tagits bort eller togglats))
+
+`// Our first side-effect
+  useEffect( () => {
+  		console.log("Updating page title using an effect")
+  		document.title = todos.length + " todos"
+  	}, [todos.lentgh] )
+`
+
+	`
+  // This will only be executed when the component is mounted,
+	// and only AFTER the component has been rendered
+	useEffect(() => {
+		console.log("Look mom, I'm a newly mounted component 👶🏻")
+	}, [])
+
+	// This will only be executed if `finishedTodos.length` or `todos.length`
+	// have changed since last render, and only AFTER the component has been rendered
+	useEffect( () => {
+		console.log("Updating page title using an effect")
+		document.title = `${finishedTodos.length} of ${todos.length} completed`
+	}, [finishedTodos.length, todos.length] )
+
+	useEffect(() => {
+		console.log("🎉")
+	})
+  `
