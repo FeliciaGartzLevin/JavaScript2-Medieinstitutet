@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TodoListItem from './components/TodoListItem'
+import TodoCounter from './components/TodoCounter'
 import { Todo, TodoList } from './types'
 import './assets/scss/App.scss'
 
@@ -85,9 +86,11 @@ function App() {
 						))}
 					</ul>
 
-					<p className="status">
-						{finishedTodos.length} of {todos.length} todos completed
-					</p>
+					<TodoCounter
+						todos={todos}
+						finishedTodos={finishedTodos}
+					/>
+
 				</>
 			)}
 
