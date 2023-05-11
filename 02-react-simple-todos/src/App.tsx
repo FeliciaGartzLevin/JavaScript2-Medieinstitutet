@@ -45,8 +45,7 @@ function App() {
 		setNewTodoTitle("")
 	}
 
-	const completedTodos = todos.filter(todo => todo.completed
-	)
+	const completedTodos = todos.filter(todo => todo.completed)
 
 	return (
 		<>
