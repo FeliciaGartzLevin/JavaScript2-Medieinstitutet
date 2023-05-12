@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './assets/scss/App.scss'
 import { getResource } from './services/API'
+import ResourceList from './components/ResourceList'
 
 interface IResource {
 	id: number
@@ -61,25 +62,12 @@ function App() {
 				<button onClick={() => setResource('memes')} className="btn btn-info">Memes 😂</button>
 			</div>
 
-			{loading && <p>Loading...</p>}
-
-			{!loading && resource && data.length > 0 && (
-				<>
-					<h2>{resource}</h2>
-					<p>There are {data.length} {resource}.</p>
-					<ol>
-						{data.map(item => (
-							<li key={item.id}>{item.title}</li>
-						))}
-					</ol>
-				</>
-			)}
-
-			{error && (
-				<p className="alert alert-warning m-3" role="alert">
-					{error}
-				</p>
-			)}
+			<ResourceList
+				error={error}
+				loading={loading}
+				resource={resource}
+				data={data}
+			/>
 		</div>
 	)
 }
