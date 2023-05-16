@@ -18,7 +18,6 @@ const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 			completed: false,
 		}
 
-
 		// Man kan skapa svårfunna buggar om man kan setta en state ute i componenterna,
 		// så detta gör vi inte här, utan skickar ut datan till 'App' så att setState sker enbart där.
 		// setTodos([...todos, newTodo]) // <------ detta ska inte vara här (se ovan)

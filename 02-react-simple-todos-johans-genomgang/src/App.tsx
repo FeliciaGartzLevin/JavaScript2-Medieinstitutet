@@ -1,17 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import TodoCounter from './components/TodoCounter'
 import AddNewTodoForm from './components/AddNewTodoForm'
 import ATodoList from './components/ATodoList'
 import { Todo, TodoList } from './types'
 import './assets/scss/App.scss'
+import { getTodos } from './services/TodosAPI'
 
 function App() {
-	const [todos, setTodos] = useState<TodoList>([
-		{ title: "Make coffee", completed: true },
-		{ title: "Drink coffee", completed: false },
-		{ title: "Drink MOAR coffee", completed: false },
-		{ title: "Drink ALL THE coffee", completed: false },
-	])
+	const [todos, setTodos] = useState<TodoList>([])
+
+	// steg 1. WS.gör en async/await function och kalla på getTodos() ✅
+
+	useEffect(() => {
+		if (!todos) {
+			return
+		}
+
+		const fetchTodos = async () => {
+			try {
+				const payload = await getTodos()
+
+				setTodos(payload)
+			} catch (e: any) {
+				console.log(e)
+			}
+
+		}
+
+		fetchTodos()
+
+	}, [])
+
 	const addTodo = (newTodo: Todo) => {
 		setTodos([...todos, newTodo])
 	}
@@ -60,7 +79,7 @@ function App() {
 			)}
 
 			{todos.length === 0 && (
-				<p>Yayyy, you have 0 todos to do</p>
+				<p>No todos to do. Take a rest 😊</p>
 			)}
 
 		</div>
