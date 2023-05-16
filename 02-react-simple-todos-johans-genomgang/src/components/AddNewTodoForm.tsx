@@ -22,6 +22,7 @@ const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 		// så detta gör vi inte här, utan skickar ut datan till 'App' så att setState sker enbart där.
 		// setTodos([...todos, newTodo]) // <------ detta ska inte vara här (se ovan)
 
+
 		// Vi skriver såhär istället:
 		onAddTodo(newTodo)   // <-- calls `addTodo()` in `App.tsx`
 
