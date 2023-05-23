@@ -6,10 +6,11 @@ import { Todo, TodoList } from './types'
 import './assets/scss/App.scss'
 import { getTodos, createTodo, delTodo, patchTodo } from './services/TodosAPI'
 
+
+// johans lösning finns i branch lesson-6 i hans kod
+
 function App() {
 	const [todos, setTodos] = useState<TodoList>([])
-
-	// steg 1. WS.gör en async/await function och kalla på getTodos() ✅
 
 	const fetchCommands = () => {
 		if (!todos) {
@@ -34,7 +35,6 @@ function App() {
 	}, [])
 
 	const addTodo = async (newTodo: Todo) => {
-		// setTodos([...todos, newTodo])
 
 		try {
 			await createTodo(newTodo)
@@ -48,7 +48,6 @@ function App() {
 	}
 
 	const deleteTodo = async (todoToDelete: Todo) => {
-		// fetchCommands() //behövs detta verkligen? onödig hämtning?
 		const todoDel = todos.find(todo => todo === todoToDelete)
 		if (!todoDel) return
 		await delTodo(todoDel.id!.toString())
@@ -60,8 +59,6 @@ function App() {
 		if (!todo) return
 		todo.completed = !todo.completed
 		await patchTodo(todo.id!.toString(), todo)
-
-		// setTodos([...todos])
 
 		fetchCommands()
 	}
