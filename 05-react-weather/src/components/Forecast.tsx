@@ -1,17 +1,22 @@
 import React from 'react'
 import forecastBanner from '../assets/images/forecast-banner.png'
+import { ICurrentWeather } from '../types'
 
-const Forecast = () => {
+interface IProps {
+	weather: ICurrentWeather
+}
+
+const Forecast: React.FC<IProps> = ({ weather }) => {
 	return (
 		<div id="forecast">
 			<div className="card">
 
-				<img src={forecastBanner} className="card-img-top" alt="Daytime, nighttime, daytime, nighttime"/>
+				<img src={forecastBanner} className="card-img-top" alt="Daytime, nighttime, daytime, nighttime" />
 
 				<div className="card-body">
 					<h5 className="card-title" id="location">
-						<span id="city">CITY</span>,
-						<span id="country">COUNTRY</span>
+						<span id="city">{weather.name}</span>,
+						<span id="country">{weather.sys.country}</span>
 					</h5>
 					<p className="temp">
 						<span id="temperature">TEMP</span>
