@@ -11,7 +11,6 @@ import { getTodos, createTodo, delTodo, patchTodo } from './services/TodosAPI'
 
 function App() {
 	const [todos, setTodos] = useState<TodoList>([])
-
 	const fetchCommands = () => {
 		if (!todos) {
 			return
@@ -58,6 +57,7 @@ function App() {
 	const toggleTodo = async (todo: Todo) => {
 		if (!todo) return
 		todo.completed = !todo.completed
+		// skickar här in hela todon och patchar den även om jag bara vill ändra completed
 		await patchTodo(todo.id!.toString(), todo)
 
 		fetchCommands()
