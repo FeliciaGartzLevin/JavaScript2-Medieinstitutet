@@ -7,7 +7,7 @@ import Airplane from './assets/images/747.svg'
 import './assets/scss/App.scss'
 
 function App() {
-	const [currentWeather, setCurrentWeather] = useState<ICurrentWeather>()
+	const [currentWeather, setCurrentWeather] = useState<ICurrentWeather | null>(null)
 
 	const getWeather = async (city: string) => {
 
@@ -27,9 +27,10 @@ function App() {
 				onSearch={getWeather}
 			/>
 
-			<Forecast
+			{currentWeather && <Forecast
 				weather={currentWeather}
 			/>
+			}
 		</div>
 	)
 }
