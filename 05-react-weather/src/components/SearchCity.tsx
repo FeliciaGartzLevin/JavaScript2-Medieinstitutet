@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { getCurrentWeather } from '../services/owmapi'
 
 interface IProps {
 	onSearch: (city: string) => void
@@ -33,6 +32,7 @@ const SearchCity: React.FC<IProps> = ({ onSearch }) => {
 					/>
 
 					<button
+						disabled={city.length < 3}
 						type="submit"
 						className="btn btn-success"
 					>🔍</button>

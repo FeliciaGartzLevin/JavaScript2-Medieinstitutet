@@ -20,32 +20,43 @@ const Forecast: React.FC<IProps> = ({ weather }) => {
 						<span id="country">{weather.sys!.country}</span>
 					</h5>
 					<p className="temp">
-						<span id="temperature">TEMP</span>
+						<span id="temperature">{weather.main.temp}</span>
 						&deg;C
 					</p>
 					<p className="humidity">
-						<span id="humidity">HUMIDITY</span> % humidity
+						<span id="humidity">{weather.main.humidity}</span> % humidity
 					</p>
 					<p className="wind">
-						<span id="windspeed">WIND_SPEED</span> m/s
+						<span id="windspeed">{weather.wind.speed}</span> m/s {weather.wind.deg}&deg;
 					</p>
 
-					{/*
+
 					<ul className="conditions">
-						<li><img src="" title="CONDITION_MAIN" alt="CONDITION_MAIN">CONDITION_DESCRIPTION</li>
+						{weather.weather.map(condition => (
+							<li key={condition.id}>
+								<img
+									src={`http://openweathermap.org/img/wn/${condition.icon}.png`}
+									title={condition.main}
+									alt={condition.description}
+								/>
+							</li>
+
+						))}
 					</ul>
 
-					<p className="text-muted small">
+					{/* 	<p className="text-muted small">
 						<span>
 							1970-01-01 13:37:00
 						</span>
-					</p>
-					*/}
+					</p> */}
+
 				</div>
 
 			</div>
 		</div>
+
 	)
+
 }
 
 export default Forecast
