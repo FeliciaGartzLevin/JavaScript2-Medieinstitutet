@@ -44,3 +44,21 @@ useEffect() - kan välja efter vilka förändringar den ska renderas, (t ex änd
 		console.log("🎉")
 	})
   `
+## 06-better-todos
+
+### Roadmap routes
+
+```text
+/ - welcome page
+/todos - index of todos
+/todos/1 - show todo with id 1
+/todos/2 - show todo with id 2
+/todos/add - show create todo form
+/todos/1/edit - show edit todo form for todo with id 1
+```
+
+1. Gå in i main.tsx och `import { BrowserRouter } from 'react-router-dom'`
+
+2. Wrappa App component i BrowserRouter.
+
+3. `import { Routes, Route } from 'react-router-dom'` i App.tsx 

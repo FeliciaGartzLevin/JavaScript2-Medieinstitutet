@@ -1,6 +1,6 @@
 {
   "todos": [
-  {
+    {
       "title": "Learn React Bootstrap",
       "completed": false,
       "id": 1
