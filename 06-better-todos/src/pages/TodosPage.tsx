@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Todo, Todos } from '../types'
-import TodoCounter from '../components/TodoCounter'
-import TodoList from '../components/TodoList'
-import AddNewTodoForm from '../components/AddNewTodoForm'
+import ListGroup from 'react-bootstrap/ListGroup'
+import { Link } from 'react-router-dom'
 import * as TodosAPI from '../services/TodosAPI'
 
 const TodosPage = () => {
@@ -14,12 +13,7 @@ const TodosPage = () => {
 		setTodos(data)
 	}
 
-	// Create a new todo in the API
-	const addTodo = async (todo: Todo) => {
-		await TodosAPI.createTodo(todo)
-		getTodos()
-	}
-
+	/*
 	// Delete a todo in the api
 	const deleteTodo = async (todo: Todo) => {
 		if (!todo.id) {
@@ -47,39 +41,33 @@ const TodosPage = () => {
 		// Get all the todos from the api
 		getTodos()
 	}
+	*/
 
 	// fetch todos when App is being mounted
 	useEffect(() => {
 		getTodos()
 	}, [])
 
-	const unfinishedTodos = todos.filter(todo => !todo.completed)
-	const finishedTodos = todos.filter(todo => todo.completed)
-
-	// console.log("App rendering...")
-
 	return (
 		<>
-			<h1 className="mb-3">React Simple Todos</h1>
+			<h1 className="mb-3">Todos</h1>
 
-			<AddNewTodoForm onAddTodo={addTodo} />
+
 
 			{todos.length > 0 && (
-				<>
-					<TodoList
-						onToggle={toggleTodo}
-						onDelete={deleteTodo}
-						todos={unfinishedTodos}
-					/>
-
-					<TodoList
-						onToggle={toggleTodo}
-						onDelete={deleteTodo}
-						todos={finishedTodos}
-					/>
-
-					<TodoCounter finished={finishedTodos.length} total={todos.length} />
-				</>
+				<ListGroup className="todolist">
+					{todos.map(todo => (
+						<ListGroup.Item
+							action
+							as={Link}
+							key={todo.id}
+							className={todo.completed ? 'done' : ''}
+							to={`/todos/${todo.id}`}
+						>
+							{todo.title}
+						</ListGroup.Item>
+					))}
+				</ListGroup>
 			)}
 
 			{todos.length === 0 && (
