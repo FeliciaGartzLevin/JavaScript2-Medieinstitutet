@@ -26,7 +26,7 @@ function CreateTodoPage() {
 
 		} catch (err: any) {
 			setError(err.message)
-			console.log(err)
+			// console.log(err)
 		}
 	}
 
