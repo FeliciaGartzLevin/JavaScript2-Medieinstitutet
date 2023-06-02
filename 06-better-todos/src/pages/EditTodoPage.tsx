@@ -27,6 +27,7 @@ function EditTodoPage() {
 
 			// update todo state with data
 			setTodo(data)
+			setNewTodoTitle(data.title)
 
 		} catch (err: any) {
 			// set error
@@ -47,15 +48,9 @@ function EditTodoPage() {
 
 		try {
 			// Update a todo in the api
-			const updatedTodo = await TodosAPI.updateTodo(todo!.id, {
+			await TodosAPI.updateTodo(todo!.id, {
 				title: newTodoTitle
 			})
-
-			// update todo state with the updated todo
-			setTodo(updatedTodo)
-
-			// clear newTodoTitle state
-			setNewTodoTitle("")
 
 			navigate(`/todos/${id}`, {
 				replace: true,
@@ -70,7 +65,6 @@ function EditTodoPage() {
 		}
 
 	}
-
 
 	useEffect(() => {
 		if (typeof todoId !== "number") return
