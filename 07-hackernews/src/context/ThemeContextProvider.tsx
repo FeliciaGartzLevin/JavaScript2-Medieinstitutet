@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 type ThemeContextType = {
 	isDarkMode: boolean
@@ -15,6 +15,10 @@ export const ThemeContext = createContext<ThemeContextType>({
 	}
 
 })
+
+export const useThemeContext = () => {
+	return useContext(ThemeContext)
+}
 
 interface IProps {
 	children: React.ReactNode
