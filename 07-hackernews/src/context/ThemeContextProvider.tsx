@@ -16,10 +16,6 @@ export const ThemeContext = createContext<ThemeContextType>({
 
 })
 
-export const useThemeContext = () => {
-	return useContext(ThemeContext)
-}
-
 interface IProps {
 	children: React.ReactNode
 }

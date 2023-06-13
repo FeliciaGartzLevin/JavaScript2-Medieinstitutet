@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import { useThemeContext } from '../context/ThemeContextProvider'
+import useThemeContext from '../hooks/useThemeContext'
 import { NavLink, Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 
@@ -16,7 +16,9 @@ const Navigation = () => {
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="ms-auto">
-						<Nav.Link as={NavLink} end to="/search">Search</Nav.Link>
+						<Nav.Link as={NavLink} to="/chuck-norris">💪🏻 Random Chuck</Nav.Link>
+						<Nav.Link as={NavLink} end to="/random-dog">🐩Random dog</Nav.Link>
+						<Nav.Link as={NavLink} end to="/search">🔍Search HN</Nav.Link>
 
 						<Button
 							variant='outline-secondary'
