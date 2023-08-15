@@ -62,3 +62,18 @@ useEffect() - kan välja efter vilka förändringar den ska renderas, (t ex änd
 2. Wrappa App component i BrowserRouter.
 
 3. `import { Routes, Route } from 'react-router-dom'` i App.tsx 
+
+## 10-react-query
+
+### Terminalkommandon för att starta upp ett nytt reactproject:
+
+`npm create vite@latest 10-react-query -- --template 
+
+(om mappen redan finns och man vill skapa root files direkt i den:) npm create vite@latest . -- --template 
+
+react-ts
+cd 10-react-query
+npm i axios bootstrap react-bootstrap react-router-dom sass @tanstack/react-query
+npm i -D @tanstack/eslint-plugin-query`
+
+
