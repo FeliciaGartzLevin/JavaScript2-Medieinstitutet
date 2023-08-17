@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CatImgResponse } from '../types'
+import { CatImgResponse } from '../types/Cat.types'
 
 
 const FAKE_DELAY = 2500
@@ -31,10 +31,10 @@ const get = async <T>(endpoint: string) => {
 }
 
 /**
- * Get a random cat img
+ * Get a random cat img or from a specific breed
  *
  * @returns Promise
  */
-export const getRandomCat = () => {
-	return get<CatImgResponse[]>("/images/search/")
+export const getRandomCat = async (breedId?: string) => {
+	return await get<CatImgResponse[]>(`/images/search?breed_ids=${breedId}`)
 }

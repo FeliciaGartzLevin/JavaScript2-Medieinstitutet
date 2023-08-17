@@ -3,30 +3,40 @@ import Alert from "react-bootstrap/Alert"
 import Button from "react-bootstrap/Button"
 import { useQuery } from '@tanstack/react-query'
 import { getRandomCat } from "../services/TheCatAPI"
+import { useState } from "react"
 
 const RandomCatPage = () => {
-	const {
-		data,
-		isError,
-		isFetching,
-		isLoading,
-		// isStale,
-		// isSuccess,
-		refetch,
-		// status,
-	} = useQuery(["random-cat"], getRandomCat)
+	const [breed, setBreed] = useState<string>('')
 
-	if (isError) {
-		return <Alert variant="error">Oops! The dog chased away the cat 🐕</Alert>
+	const randomCatImg = useQuery({
+		queryKey: ["random-cat", breed],
+		queryFn: () => getRandomCat(breed),
+		keepPreviousData: true,
+		// ngt med enable/disable??
+	})
+
+	const fetchRandomImg = () => {
+		setBreed('')
+		if (!randomCatImg.data) {
+			return
+		} else if (randomCatImg.data) {
+			randomCatImg.refetch()
+		}
 	}
 
-	if (isFetching) {
-		return (
-			<div className="d-flex justify-content-center my-3">
 
-				<Image height="400px" src="https://media.tenor.com/VgBizIcrg-oAAAAC/cat-vinyl.gif"></Image>
-			</div>
-		)
+	const fetchCatBreedImg = async (breedId: string) => {
+		setBreed(breedId)
+
+		if (!randomCatImg.data) {
+			return
+		} else if (randomCatImg.data) {
+			randomCatImg.refetch()
+		}
+	}
+
+	if (randomCatImg.isError) {
+		return <Alert variant="error">Oops! The dog chased away the cat 🐕</Alert>
 	}
 
 	return (
@@ -34,23 +44,76 @@ const RandomCatPage = () => {
 			<h1>I ❤️ Random Cats</h1>
 			<p>A cats behaviour is random so here's a random cat for you! Such random, very catlike, much hairball</p>
 
-			{data && console.log(data)}
+			{randomCatImg.data && console.log(randomCatImg.data)}
+			{/*
+			{randomCatImg.isFetching &&
+				<div className="position-relative m-2">
+					<Image height="100px" src="https://media.tenor.com/VgBizIcrg-oAAAAC/cat-vinyl.gif"></Image>
+				</div>
+			} */}
 
-			<div className="d-flex justify-content-center my-3">
-				{data && data.map(cat => (
-					<Image height="5rem" width="auto" fluid key={cat.id} src={cat.url} ></Image>
-				))
-				}
-			</div>
-
-			<div className="d-flex justify-content-center">
+			<div className="d-flex justify-content-center mb-3">
 				<Button
 					variant="primary"
-					disabled={isFetching}
-					onClick={() => refetch()}
+					disabled={randomCatImg.isFetching}
+					onClick={fetchRandomImg}
 				>
 					MOAR PURR!
 				</Button>
+			</div>
+
+			<div className="d-flex justify-content-center flex-wrap flex-column">
+				<p>Random pic of a cat breed below:</p>
+				<div className="btn-group" role="group" aria-label="Basic example">
+
+					<Button
+						type="button"
+						variant="secondary"
+						disabled={randomCatImg.isFetching}
+						onClick={() => fetchCatBreedImg('aege')}
+					>
+						Aegean
+					</Button>
+
+					<Button
+						type="button"
+						variant="secondary"
+						disabled={randomCatImg.isFetching}
+						onClick={() => fetchCatBreedImg('amau')}
+					>
+						Arabian Mau
+					</Button>
+
+					<Button
+						type="button"
+						variant="secondary"
+						disabled={randomCatImg.isFetching}
+						onClick={() => fetchCatBreedImg('kora')}
+					>
+						Korat
+					</Button>
+
+					<Button
+						type="button"
+						variant="secondary"
+						disabled={randomCatImg.isFetching}
+						onClick={() => fetchCatBreedImg('awir')}
+					>
+						American Wirehair
+					</Button>
+
+
+				</div>
+
+				<div className="d-flex justify-content-center my-3">
+
+					{randomCatImg.isFetched && randomCatImg.data && randomCatImg.data.map(cat => (
+						<Image height="5rem" width="auto" fluid key={cat.id} src={cat.url} ></Image>
+					))
+					}
+
+				</div>
+
 			</div>
 
 

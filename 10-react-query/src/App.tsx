@@ -7,12 +7,14 @@ import HomePage from './pages/HomePage'
 import Navigation from './pages/partials/Navigation'
 import PageNotFound from './pages/PageNotFound'
 import RandomCatPage from './pages/RandomCatPage'
+import GlobalFetchingSpinner from './components/GlobalFetchingSpinner'
 
 const App = () => {
 	return (
 		<div id="App">
 
 			<Navigation />
+			<GlobalFetchingSpinner />
 
 			<Container className="py-3">
 				<Routes>
