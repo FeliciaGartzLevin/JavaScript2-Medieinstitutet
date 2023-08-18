@@ -1,39 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { useSearchParams } from 'react-router-dom'
-import { searchByDate as HN_searchByDate } from '../services/HackerNewsAPI'
-import { HN_SearchResponse } from '../types/HN_Search.types'
+import { search as HN_search } from '../services/HackerNewsAPI'
+import { useQuery } from '@tanstack/react-query'
 
-const SearchPage = () => {
+const SearchHackerNewsPage = () => {
 	const [error, setError] = useState<string | null>(null)
-	const [loading, setLoading] = useState(false)
 	const [page, setPage] = useState(0)
 	const [searchInput, setSearchInput] = useState("")
-	const [searchResult, setSearchResult] = useState<HN_SearchResponse | null>(null)
 	const [searchParams, setSearchParams] = useSearchParams()
 
 	// get "query=" from URL Search Params
-	const query = searchParams.get("query")
+	const query = searchParams.get("query") ?? ''
 
-	const searchHackerNews = async (searchQuery: string, searchPage = 0) => {
-		setError(null)
-		setLoading(true)
-		setSearchResult(null)
+	const HackerNewsSearch = useQuery({
+		queryKey: ["hacker-news-search", query],
+		queryFn: () => {
+			return HN_search(query)
+		},
+		enabled: !!query,
+	})
 
-		try {
-			const res = await HN_searchByDate(searchQuery, searchPage)
-			setSearchResult(res)
-
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (err: any) {
-			setError(err.message)
-		}
-
-		setLoading(false)
-	}
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
@@ -50,14 +40,6 @@ const SearchPage = () => {
 		setSearchParams({ query: searchInput })    // ?query=tesla
 	}
 
-	// react to changes in our page state
-	useEffect(() => {
-		if (!query) {
-			return
-		}
-
-		searchHackerNews(query, page)
-	}, [query, page])
 
 	return (
 		<>
@@ -84,16 +66,14 @@ const SearchPage = () => {
 				</div>
 			</Form>
 
-			{error && <Alert variant='warning'>{error}</Alert>}
+			{HackerNewsSearch.isError && <Alert variant='warning'>{error}</Alert>}
 
-			{loading && <p>🤔 Loading...</p>}
-
-			{searchResult && (
+			{HackerNewsSearch.data && (
 				<div id="search-result">
-					<p>Showing {searchResult.nbHits} search results for "{query}"...</p>
+					<p>Showing {new Intl.NumberFormat().format(HackerNewsSearch.data.nbHits)} search results for "{query}"...</p>
 
 					<ListGroup className="mb-3">
-						{searchResult.hits.map(hit => (
+						{HackerNewsSearch.data.hits.map(hit => (
 							<ListGroup.Item
 								action
 								href={hit.url}
@@ -107,18 +87,18 @@ const SearchPage = () => {
 						))}
 					</ListGroup>
 
-					<Pagination
+					{/* 	<Pagination
 						page={searchResult.page + 1}
 						totalPages={searchResult.nbPages}
 						hasPreviousPage={page > 0}
 						hasNextPage={page + 1 < searchResult.nbPages}
 						onPreviousPage={() => { setPage(prevValue => prevValue - 1) }}
 						onNextPage={() => { setPage(prevValue => prevValue + 1) }}
-					/>
+					/> */}
 				</div>
 			)}
 		</>
 	)
 }
 
-export default SearchPage
+export default SearchHackerNewsPage

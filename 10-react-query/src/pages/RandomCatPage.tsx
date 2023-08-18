@@ -45,12 +45,7 @@ const RandomCatPage = () => {
 			<p>A cats behaviour is random so here's a random cat for you! Such random, very catlike, much hairball</p>
 
 			{randomCatImg.data && console.log(randomCatImg.data)}
-			{/*
-			{randomCatImg.isFetching &&
-				<div className="position-relative m-2">
-					<Image height="100px" src="https://media.tenor.com/VgBizIcrg-oAAAAC/cat-vinyl.gif"></Image>
-				</div>
-			} */}
+
 
 			<div className="d-flex justify-content-center mb-3">
 				<Button

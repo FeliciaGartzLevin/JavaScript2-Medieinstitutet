@@ -7,6 +7,8 @@
 import axios from 'axios'
 import { HN_SearchResponse } from '../types/HN_Search.types'
 
+const FAKE_DELAY = 2500
+
 // Create a new axios instance
 const instance = axios.create({
 	baseURL: "https://hn.algolia.com/api/v1",
@@ -25,6 +27,10 @@ const instance = axios.create({
  */
 const get = async <T>(endpoint: string) => {
 	const response = await instance.get(endpoint)
+
+	// fake slow API if FAKE_DELAY is not falsy
+	!!FAKE_DELAY && await new Promise(resolve => setTimeout(resolve, FAKE_DELAY))
+
 	return response.data as T
 }
 

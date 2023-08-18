@@ -8,6 +8,7 @@ import Navigation from './pages/partials/Navigation'
 import PageNotFound from './pages/PageNotFound'
 import RandomCatPage from './pages/RandomCatPage'
 import GlobalFetchingSpinner from './components/GlobalFetchingSpinner'
+import SearchHackerNewsPage from './pages/SearchHackerNewsPage'
 
 const App = () => {
 	return (
@@ -20,6 +21,7 @@ const App = () => {
 				<Routes>
 					<Route path="/" element={<HomePage />} />
 					<Route path="/random-cat" element={<RandomCatPage />} />
+					<Route path="/search-hacker-news" element={<SearchHackerNewsPage />} />
 
 					<Route path="*" element={<PageNotFound />} />
 				</Routes>
