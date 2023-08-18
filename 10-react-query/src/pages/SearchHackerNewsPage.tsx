@@ -4,11 +4,10 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { useSearchParams } from 'react-router-dom'
-import { search as HN_search } from '../services/HackerNewsAPI'
+import { searchByDate as HN_search } from '../services/HackerNewsAPI'
 import { useQuery } from '@tanstack/react-query'
-
+import Pagination from '../components/Pagination'
 const SearchHackerNewsPage = () => {
-	const [error, setError] = useState<string | null>(null)
 	const [page, setPage] = useState(0)
 	const [searchInput, setSearchInput] = useState("")
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -16,14 +15,14 @@ const SearchHackerNewsPage = () => {
 	// get "query=" from URL Search Params
 	const query = searchParams.get("query") ?? ''
 
-	const HackerNewsSearch = useQuery({
-		queryKey: ["hacker-news-search", query],
-		queryFn: () => {
-			return HN_search(query)
-		},
-		enabled: !!query,
-	})
-
+	const HackerNewsSearch = useQuery(
+		['search-hn', { query, page }],
+		() => HN_search(query, page),
+		{
+			enabled: !!query,
+			keepPreviousData: true,
+		}
+	)
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
@@ -66,7 +65,7 @@ const SearchHackerNewsPage = () => {
 				</div>
 			</Form>
 
-			{HackerNewsSearch.isError && <Alert variant='warning'>{error}</Alert>}
+			{HackerNewsSearch.isError && <Alert variant='warning'>Ooops, something went wrong!</Alert>}
 
 			{HackerNewsSearch.data && (
 				<div id="search-result">
@@ -87,14 +86,14 @@ const SearchHackerNewsPage = () => {
 						))}
 					</ListGroup>
 
-					{/* 	<Pagination
-						page={searchResult.page + 1}
-						totalPages={searchResult.nbPages}
+					<Pagination
+						page={HackerNewsSearch.data.page + 1}
+						totalPages={HackerNewsSearch.data.nbPages}
 						hasPreviousPage={page > 0}
-						hasNextPage={page + 1 < searchResult.nbPages}
+						hasNextPage={page + 1 < HackerNewsSearch.data.nbPages}
 						onPreviousPage={() => { setPage(prevValue => prevValue - 1) }}
 						onNextPage={() => { setPage(prevValue => prevValue + 1) }}
-					/> */}
+					/>
 				</div>
 			)}
 		</>
