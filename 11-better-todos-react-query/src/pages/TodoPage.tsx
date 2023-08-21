@@ -24,11 +24,19 @@ const TodoPage = () => {
 	const togglePostMutation = useMutation({
 		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
 		onSuccess: (data) => {
-			queryClient.setQueryData(['todo', todoId], data)
-			queryClient.invalidateQueries(['todo', todoId], { exact: true })
+			queryClient.setQueryData(['todos', data.id], data)
+			queryClient.invalidateQueries(['todo', data.id], { exact: true })
 		}
-	}
-	)
+	})
+
+	const deletePostMutation = useMutation({
+		mutationFn: TodosAPI.deleteTodo,
+		onSuccess: (data) => {
+			queryClient.invalidateQueries(['todos'], { exact: true })
+		}
+
+	})
+
 	// Delete a todo in the api
 	const deleteTodo = async (todo: Todo) => {
 		if (!todo.id) {
@@ -36,7 +44,7 @@ const TodoPage = () => {
 		}
 
 		// Delete todo from the api
-		await TodosAPI.deleteTodo(todo.id)
+		deletePostMutation.mutate(todo.id)
 
 		// Navigate user to `/todos` (using search params/query params)
 		navigate('/todos?deleted=true', {
