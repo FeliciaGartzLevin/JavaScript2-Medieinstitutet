@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Todo } from '../types'
+import { Todo } from '../types/TodosAPI.types'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IProps {

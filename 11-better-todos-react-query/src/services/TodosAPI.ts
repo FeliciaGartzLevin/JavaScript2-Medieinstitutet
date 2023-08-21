@@ -2,16 +2,42 @@
  * Service for communicating with the json-server backend
  */
 import axios from 'axios'
-import { PartialTodo, Todo, Todos } from '../types'
+import { PartialTodo, Todo, Todos } from '../types/TodosAPI.types'
 
 const BASE_URL = 'http://localhost:3000'
+const FAKE_DELAY = 2500
+
+// Create a new axios instance
+const instance = axios.create({
+	baseURL: BASE_URL,
+	timeout: 10000,
+	headers: {
+		"Content-Type": "application/json",
+		"Accept": "application/json"
+	}
+})
+
+/**
+ * Execute a HTTP GET request to an endpoint.
+ *
+ * @param {string} endpoint Endpoint to HTTP GET
+ * @returns Promise
+ */
+const get = async <T>(endpoint: string) => {
+	const response = await instance.get<T>(endpoint)
+
+	// Simulate a delay
+	!!FAKE_DELAY && await new Promise((r) => setTimeout(r, FAKE_DELAY))
+
+	return response.data
+}
 
 /**
  * Get all todos
  */
-export const getTodos = async () => {
-	const res = await axios.get(`${BASE_URL}/todos`)
-	return res.data as Todos
+export const getTodos = () => {
+	return get<Todos>(`/todos`)
+
 }
 
 /**
@@ -20,8 +46,7 @@ export const getTodos = async () => {
  * @param todo_id Todo ID to get
  */
 export const getTodo = async (todo_id: number) => {
-	const res = await axios.get(`${BASE_URL}/todos/${todo_id}`)
-	return res.data as Todo
+	return get<Todo>('/todos/' + todo_id)
 }
 
 /**

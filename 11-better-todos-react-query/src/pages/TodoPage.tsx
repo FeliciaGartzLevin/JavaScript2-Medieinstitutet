@@ -1,40 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Todo } from '../types'
+import { Todo } from '../types/TodosAPI.types'
 import * as TodosAPI from '../services/TodosAPI'
 import ConfirmationModal from '../components/ConfirmationModal'
 
 const TodoPage = () => {
-	const [error, setError] = useState<string|null>(null)
-	const [loading, setLoading] = useState(true)
-	const [todo, setTodo] = useState<Todo|null>(null)
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 	const navigate = useNavigate()
 	const { id } = useParams()
 	const todoId = Number(id)
 
-	// Get todo from API
-	const getTodo = async (id: number) => {
-		setError(null)
-		setLoading(true)
-
-		try {
-			// call TodosAPI
-			const data = await TodosAPI.getTodo(id)
-
-			// update todo state with data
-			setTodo(data)
-
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (err: any) {
-			// set error
-			setError(err.message)
-		}
-
-		setLoading(false)
-	}
+	const {
+		data: todo,
+		isError,
+		isLoading,
+		refetch: getTodo,
+	} = useQuery(["todo", { id: todoId }], () => TodosAPI.getTodo(todoId))
 
 	// Delete a todo in the api
 	const deleteTodo = async (todo: Todo) => {
@@ -42,20 +26,8 @@ const TodoPage = () => {
 			return
 		}
 
-		// if (!window.confirm('U SURE BRO?!')) {
-		// 	return
-		// }
-
 		// Delete todo from the api
 		await TodosAPI.deleteTodo(todo.id)
-
-		// Navigate user to `/todos` (using state)
-		// navigate('/todos', {
-		// 	replace: true,
-		// 	state: {
-		// 		message: `Todo "${todo.title}" was successfully deleted`,
-		// 	},
-		// })
 
 		// Navigate user to `/todos` (using search params/query params)
 		navigate('/todos?deleted=true', {
@@ -75,29 +47,21 @@ const TodoPage = () => {
 		})
 
 		// update todo state with the updated todo
-		setTodo(updatedTodo)
+		getTodo()
 	}
 
-	useEffect(() => {
-		if (typeof todoId !== "number") {
-			return
-		}
-
-		getTodo(todoId)
-	}, [todoId])
-
-	if (error) {
+	if (isError) {
 		return (
 			<Alert variant="warning">
 				<h1>Something went wrong!</h1>
-				<p>{error}</p>
+				<p>It wasn't me that did something /the server</p>
 
-				<Button variant='primary' onClick={() => getTodo(todoId)}>TRY AGAIN!!!</Button>
+				<Button variant='primary' onClick={() => getTodo()}>TRY AGAIN!!!</Button>
 			</Alert>
 		)
 	}
 
-	if (loading || !todo) {
+	if (isLoading || !todo) {
 		return (<p>Loading...</p>)
 	}
 

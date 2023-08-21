@@ -8,6 +8,8 @@ import NotFound from './pages/NotFound'
 import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
 import './assets/scss/App.scss'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 
 const App = () => {
 	return (
@@ -35,6 +37,9 @@ const App = () => {
 					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Container>
+
+			<ReactQueryDevtools initialIsOpen={false} position='bottom-right' />
+
 		</div>
 	)
 }

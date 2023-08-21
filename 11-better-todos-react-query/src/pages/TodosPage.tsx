@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Todo, Todos } from '../types'
+import { useQuery } from '@tanstack/react-query'
+import { Todo } from '../types/TodosAPI.types'
 import Alert from 'react-bootstrap/Alert'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -8,36 +8,28 @@ import AutoDismissingAlert from '../components/AutoDismissingAlert'
 import * as TodosAPI from '../services/TodosAPI'
 
 const TodosPage = () => {
-	const [todos, setTodos] = useState<Todos|null>(null)
 	const location = useLocation()
 	const [searchParams, setSearchParams] = useSearchParams()
 	const searchParams_deletedTodo = searchParams.get("deleted")
 	const deletedTodo = Boolean(searchParams_deletedTodo)
 
-	// Get todos from api
-	const getTodos = async () => {
-		const data = await TodosAPI.getTodos()
+	const {
+		data: todos,
+		isError,
+		refetch: getTodos
+	} = useQuery(['todos'], TodosAPI.getTodos)
 
-		// sort alphabetically by title
-		data.sort((a, b) => a.title.localeCompare(b.title))
+	// // sort alphabetically by title
+	// data.sort((a, b) => a.title.localeCompare(b.title))
 
-		// sort by completed status
-		data.sort((a, b) => Number(a.completed) - Number(b.completed))
-
-		// update todos state
-		setTodos(data)
-	}
+	// // sort by completed status
+	// data.sort((a, b) => Number(a.completed) - Number(b.completed))
 
 	// Create a new todo in the API
 	const addTodo = async (todo: Todo) => {
 		await TodosAPI.createTodo(todo)
 		getTodos()
 	}
-
-	// fetch todos when App is being mounted
-	useEffect(() => {
-		getTodos()
-	}, [])
 
 	return (
 		<>
@@ -55,6 +47,12 @@ const TodosPage = () => {
 				<AutoDismissingAlert variant="success" hideAfter={3}>
 					Todo was successfully deleted
 				</AutoDismissingAlert>
+			)}
+
+			{isError && (
+				<Alert variant="danger">
+					An terrible, inexplicable error occurred while fetching todos. It wasn't me!
+				</Alert>
 			)}
 
 			{todos && todos.length > 0 && (

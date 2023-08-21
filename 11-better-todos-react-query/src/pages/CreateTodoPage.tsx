@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Alert from 'react-bootstrap/Alert'
-import { Todo } from '../types'
+import { Todo } from '../types/TodosAPI.types'
 import AddNewTodoForm from '../components/AddNewTodoForm'
 import * as TodosAPI from '../services/TodosAPI'
 
 const CreateTodoPage = () => {
-	const [success, setSuccess] = useState<boolean|null>(null)
+	const [success, setSuccess] = useState<boolean | null>(null)
 	const navigate = useNavigate()
 
 	// Create a new todo in the API
@@ -20,7 +20,7 @@ const CreateTodoPage = () => {
 
 			setSuccess(!!createdTodo)
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			setSuccess(false)
 

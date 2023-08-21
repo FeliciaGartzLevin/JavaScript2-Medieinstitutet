@@ -3,13 +3,13 @@ import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Todo } from '../types'
+import { Todo } from '../types/TodosAPI.types'
 import * as TodosAPI from '../services/TodosAPI'
 
 const EditTodoPage = () => {
-	const [error, setError] = useState<string|null>(null)
+	const [error, setError] = useState<string | null>(null)
 	const [loading, setLoading] = useState(true)
-	const [todo, setTodo] = useState<Todo|null>(null)
+	const [todo, setTodo] = useState<Todo | null>(null)
 	const [newTodoTitle, setNewTodoTitle] = useState("")
 	const navigate = useNavigate()
 	const { id } = useParams()
@@ -28,7 +28,7 @@ const EditTodoPage = () => {
 			setTodo(data)
 			setNewTodoTitle(data.title)
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			// set error
 			setError(err.message)
