@@ -24,7 +24,7 @@ const TodoPage = () => {
 	const togglePostMutation = useMutation({
 		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
 		onSuccess: (data) => {
-			queryClient.setQueryData(['todos', todoId], data)
+			queryClient.setQueryData(['todo', todoId], data)
 			queryClient.invalidateQueries(['todo', todoId], { exact: true })
 		}
 	}
