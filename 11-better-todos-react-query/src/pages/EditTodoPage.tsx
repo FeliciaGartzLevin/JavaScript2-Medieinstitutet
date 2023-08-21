@@ -1,41 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Todo } from '../types/TodosAPI.types'
+import { updateTodoVariables } from '../types/TodosAPI.types'
 import * as TodosAPI from '../services/TodosAPI'
 
 const EditTodoPage = () => {
-	const [error, setError] = useState<string | null>(null)
-	const [loading, setLoading] = useState(true)
-	const [todo, setTodo] = useState<Todo | null>(null)
+	const queryClient = useQueryClient()
 	const [newTodoTitle, setNewTodoTitle] = useState("")
 	const navigate = useNavigate()
 	const { id } = useParams()
 	const todoId = Number(id)
 
-	// Get todo from API
-	const getTodo = async (id: number) => {
-		setError(null)
-		setLoading(true)
+	const {
+		data: todo,
+		isError: error,
+		isLoading: loading,
+		refetch: getTodo
+	} = useQuery(
+		['todo', todoId],
+		() => TodosAPI.getTodo(todoId)
+	)
 
-		try {
-			// call TodosAPI
-			const data = await TodosAPI.getTodo(id)
-
-			// update todo state with data
-			setTodo(data)
-			setNewTodoTitle(data.title)
-
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (err: any) {
-			// set error
-			setError(err.message)
+	const updatePostMutation = useMutation({
+		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
+		onSuccess: (data) => {
+			queryClient.setQueryData(['todos', todoId], data)
+			queryClient.invalidateQueries(['todo', todoId], { exact: true })
 		}
-
-		setLoading(false)
 	}
+	)
+
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -45,21 +42,16 @@ const EditTodoPage = () => {
 		}
 
 		// Update a todo in the api
-		await TodosAPI.updateTodo(todo.id, {
-			title: newTodoTitle,
+		updatePostMutation.mutate({
+			id: todoId,
+			updatedTodo: {
+				title: newTodoTitle
+			}
 		})
 
 		// redirect user to /todos/:id
 		navigate(`/todos/${todo.id}`)
 	}
-
-	useEffect(() => {
-		if (typeof todoId !== "number") {
-			return
-		}
-
-		getTodo(todoId)
-	}, [todoId])
 
 	if (error) {
 		return (
@@ -67,7 +59,7 @@ const EditTodoPage = () => {
 				<h1>Something went wrong!</h1>
 				<p>{error}</p>
 
-				<Button variant='primary' onClick={() => getTodo(todoId)}>TRY AGAIN!!!</Button>
+				<Button variant='primary' onClick={() => getTodo}>TRY AGAIN!!!</Button>
 			</Alert>
 		)
 	}

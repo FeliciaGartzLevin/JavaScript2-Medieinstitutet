@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import Alert from 'react-bootstrap/Alert'
 import { Todo } from '../types/TodosAPI.types'
@@ -6,25 +6,29 @@ import AddNewTodoForm from '../components/AddNewTodoForm'
 import * as TodosAPI from '../services/TodosAPI'
 
 const CreateTodoPage = () => {
-	const [success, setSuccess] = useState<boolean | null>(null)
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
+
+	const createPostMutation = useMutation({
+		mutationFn: TodosAPI.createTodo,
+		onSuccess: (data) => {
+			queryClient.setQueryData(['todos', data.id], data)
+			queryClient.invalidateQueries(['todos'], { exact: true })
+		}
+	})
 
 	// Create a new todo in the API
 	const addTodo = async (todo: Todo) => {
-		try {
-			const createdTodo = await TodosAPI.createTodo(todo)
 
-			setTimeout(() => {
-				navigate("/todos")
-			}, 2000)
+		createPostMutation.mutate(todo)
 
-			setSuccess(!!createdTodo)
-
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (err: any) {
-			setSuccess(false)
-
+		if (createPostMutation.isError) {
+			return
 		}
+
+		setTimeout(() => {
+			navigate("/todos")
+		}, 2000)
 	}
 
 	return (
@@ -33,11 +37,11 @@ const CreateTodoPage = () => {
 
 			<AddNewTodoForm onAddTodo={addTodo} />
 
-			{success === true && (
+			{createPostMutation.isSuccess && (
 				<Alert variant="success" className="mt-3">Todo created!</Alert>
 			)}
 
-			{success === false && (
+			{createPostMutation.isError && (
 				<Alert variant="warning" className="mt-3">Todo could not be created 😔</Alert>
 			)}
 		</>

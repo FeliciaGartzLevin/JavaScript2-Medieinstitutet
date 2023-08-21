@@ -6,3 +6,8 @@ export type Todo = {
 export type PartialTodo = Partial<Todo>
 
 export type Todos = Todo[]
+
+export type updateTodoVariables = {
+	id: number
+	updatedTodo: PartialTodo
+}

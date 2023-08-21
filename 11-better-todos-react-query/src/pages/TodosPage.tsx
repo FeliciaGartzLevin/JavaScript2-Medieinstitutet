@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Todo } from '../types/TodosAPI.types'
 import Alert from 'react-bootstrap/Alert'
 import ListGroup from 'react-bootstrap/ListGroup'
@@ -9,6 +9,7 @@ import * as TodosAPI from '../services/TodosAPI'
 
 const TodosPage = () => {
 	const location = useLocation()
+	const queryClient = useQueryClient()
 	const [searchParams, setSearchParams] = useSearchParams()
 	const searchParams_deletedTodo = searchParams.get("deleted")
 	const deletedTodo = Boolean(searchParams_deletedTodo)
@@ -16,8 +17,15 @@ const TodosPage = () => {
 	const {
 		data: todos,
 		isError,
-		refetch: getTodos
 	} = useQuery(['todos'], TodosAPI.getTodos)
+
+	const createPostMutation = useMutation({
+		mutationFn: TodosAPI.createTodo,
+		onSuccess: (data) => {
+			queryClient.setQueryData(['todos', data.id], data)
+			queryClient.invalidateQueries(['todos'], { exact: true })
+		}
+	})
 
 	// // sort alphabetically by title
 	// data.sort((a, b) => a.title.localeCompare(b.title))
@@ -27,8 +35,8 @@ const TodosPage = () => {
 
 	// Create a new todo in the API
 	const addTodo = async (todo: Todo) => {
-		await TodosAPI.createTodo(todo)
-		getTodos()
+		// await TodosAPI.createTodo(todo)
+		createPostMutation.mutate(todo)
 	}
 
 	return (
