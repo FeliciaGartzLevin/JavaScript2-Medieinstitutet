@@ -26,12 +26,13 @@ const TodoPage = () => {
 		onSuccess: (data) => {
 			queryClient.setQueryData(['todos', data.id], data)
 			queryClient.invalidateQueries(['todo', data.id], { exact: true })
+			queryClient.invalidateQueries(['todos'], { exact: true })
 		}
 	})
 
 	const deletePostMutation = useMutation({
 		mutationFn: TodosAPI.deleteTodo,
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries(['todos'], { exact: true })
 		}
 
