@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
@@ -26,9 +26,12 @@ const EditTodoPage = () => {
 
 	const updatePostMutation = useMutation({
 		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
-		onSuccess: (data) => {
-			queryClient.setQueryData(['todos', todoId], data)
+		onSuccess: (todo) => {
+			queryClient.setQueryData(['todos', todoId], todo)
 			queryClient.invalidateQueries(['todo', todoId], { exact: true })
+
+			// redirect user to /todos/:id
+			navigate(`/todos/${todo.id}`)
 		}
 	}
 	)
@@ -42,16 +45,19 @@ const EditTodoPage = () => {
 		}
 
 		// Update a todo in the api
-		updatePostMutation.mutate({
+		updatePostMutation.mutateAsync({
 			id: todoId,
 			updatedTodo: {
 				title: newTodoTitle
 			}
 		})
-
-		// redirect user to /todos/:id
-		navigate(`/todos/${todo.id}`)
 	}
+
+	useEffect(() => {
+		if (todo) {
+			setNewTodoTitle(todo.title)
+		}
+	}, [todo])
 
 	if (error) {
 		return (

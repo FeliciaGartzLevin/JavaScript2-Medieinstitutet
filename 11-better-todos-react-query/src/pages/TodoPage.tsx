@@ -34,6 +34,11 @@ const TodoPage = () => {
 		mutationFn: TodosAPI.deleteTodo,
 		onSuccess: () => {
 			queryClient.invalidateQueries(['todos'], { exact: true })
+
+			// Navigate user to `/todos` (using search params/query params)
+			navigate('/todos?deleted=true', {
+				replace: true,
+			})
 		}
 
 	})
@@ -47,10 +52,6 @@ const TodoPage = () => {
 		// Delete todo from the api
 		deletePostMutation.mutate(todo.id)
 
-		// Navigate user to `/todos` (using search params/query params)
-		navigate('/todos?deleted=true', {
-			replace: true,
-		})
 	}
 
 	// Toggle the completed status of a todo in the api
