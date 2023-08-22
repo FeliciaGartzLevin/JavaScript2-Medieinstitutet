@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Todo } from '../types/TodosAPI.types'
+import { NewTodo } from '../types/TodosAPI.types'
 import Alert from 'react-bootstrap/Alert'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -34,7 +34,7 @@ const TodosPage = () => {
 	// data.sort((a, b) => Number(a.completed) - Number(b.completed))
 
 	// Create a new todo in the API
-	const addTodo = async (todo: Todo) => {
+	const addTodo = async (todo: NewTodo) => {
 		// await TodosAPI.createTodo(todo)
 		createPostMutation.mutate(todo)
 	}

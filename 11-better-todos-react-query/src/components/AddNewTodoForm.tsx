@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Todo } from '../types/TodosAPI.types'
+import { NewTodo, Todo } from '../types/TodosAPI.types'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IProps {
-	onAddTodo: (todo: Todo) => void
+	onAddTodo: (todo: NewTodo) => void
 }
 
 const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
@@ -15,7 +15,7 @@ const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 		e.preventDefault()
 
 		// create a new todo and set a new todos state
-		const newTodo: Todo = {
+		const newTodo: NewTodo = {
 			title: newTodoTitle,
 			completed: false,
 		}
