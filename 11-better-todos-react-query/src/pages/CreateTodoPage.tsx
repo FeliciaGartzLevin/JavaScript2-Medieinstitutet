@@ -14,7 +14,7 @@ const CreateTodoPage = () => {
 		onSuccess: (data) => {
 
 			queryClient.setQueryData(['todos', data.id], data)
-			queryClient.invalidateQueries(['todos'], { exact: true })
+			queryClient.invalidateQueries(['todos'])
 
 			setTimeout(() => {
 				navigate("/todos")
@@ -26,7 +26,6 @@ const CreateTodoPage = () => {
 	// Create a new todo in the API
 	const addTodo = async (todo: NewTodo) => {
 		await createPostMutation.mutateAsync(todo)
-
 	}
 
 	return (

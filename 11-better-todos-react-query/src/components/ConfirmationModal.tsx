@@ -27,7 +27,7 @@ const ConfirmationModal: React.FC<IProps> = ({
 				<Button variant="secondary" onClick={onCancel}>
 					Cancel
 				</Button>
-				<Button variant="warning" onClick={onConfirm}>
+				<Button variant="danger" onClick={onConfirm}>
 					Confirm
 				</Button>
 			</Modal.Footer>

@@ -26,14 +26,15 @@ const TodoPage = () => {
 		onSuccess: (data) => {
 			queryClient.setQueryData(['todos', data.id], data)
 			queryClient.invalidateQueries(['todo', data.id], { exact: true })
-			queryClient.invalidateQueries(['todos'], { exact: true })
+			queryClient.invalidateQueries(['todos'])
 		}
 	})
 
 	const deletePostMutation = useMutation({
 		mutationFn: TodosAPI.deleteTodo,
-		onSuccess: () => {
-			queryClient.invalidateQueries(['todos'], { exact: true })
+		onSuccess: (todo) => {
+			// queryClient.removeQueries(['todo', todoId], todo)
+			queryClient.invalidateQueries(['todos'])
 
 			// Navigate user to `/todos` (using search params/query params)
 			navigate('/todos?deleted=true', {
