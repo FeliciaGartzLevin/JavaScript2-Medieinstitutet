@@ -3,11 +3,12 @@ import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Todo, updateTodoVariables } from '../types/TodosAPI.types'
+import { Todo, Todos, updateTodoVariables } from '../types/TodosAPI.types'
 import * as TodosAPI from '../services/TodosAPI'
 import ConfirmationModal from '../components/ConfirmationModal'
 
 const TodoPage = () => {
+	const [queryEnabled, setQueryEnabled] = useState(true)
 	const queryClient = useQueryClient()
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 	const navigate = useNavigate()
@@ -19,7 +20,11 @@ const TodoPage = () => {
 		isError,
 		isLoading,
 		refetch: getTodo,
-	} = useQuery(["todo", todoId], () => TodosAPI.getTodo(todoId))
+	} = useQuery(
+		["todo", todoId],
+		() => TodosAPI.getTodo(todoId),
+		{ enabled: queryEnabled }
+	)
 
 	const togglePostMutation = useMutation({
 		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
@@ -32,13 +37,26 @@ const TodoPage = () => {
 
 	const deletePostMutation = useMutation({
 		mutationFn: TodosAPI.deleteTodo,
-		onSuccess: (todo) => {
-			// queryClient.removeQueries(['todo', todoId], todo)
-			queryClient.invalidateQueries(['todos'])
+		onSuccess: () => {
+			// disable query for this specific single todo
+			setQueryEnabled(false)
+
+			queryClient.removeQueries({ queryKey: ["todo", { id: todoId }] })
+			// invalidate the query for all todos
+			// queryClient.invalidateQueries(['todos'])
+
+			// modify query cache for ["todos"] and construct a new array with
+			// the deleted todo excluded
+			queryClient.setQueryData<Todos>(["todos"], (prevTodos) => {
+				return prevTodos?.filter(todo => todo.id !== todoId) ?? []
+			})
 
 			// Navigate user to `/todos` (using search params/query params)
 			navigate('/todos?deleted=true', {
 				replace: true,
+				state: {
+					deleted: true,
+				}
 			})
 		}
 
@@ -94,7 +112,7 @@ const TodoPage = () => {
 			<p><strong>Status:</strong> {todo.completed ? 'Completed' : 'Not completed'}</p>
 
 			<div className="buttons mb-3">
-				<Button variant='success' onClick={() => toggleTodo(todo)}>Toggle</Button>
+				<Button variant='success' disabled={togglePostMutation.isLoading} onClick={() => toggleTodo(todo)}>Toggle</Button>
 
 				<Link to={`/todos/${todoId}/edit`}>
 					<Button variant='warning'>Edit</Button>

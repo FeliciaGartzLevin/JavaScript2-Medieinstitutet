@@ -1,29 +1,44 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { NewTodo } from '../types/TodosAPI.types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { NewTodo, Todos } from '../types/TodosAPI.types'
 import Alert from 'react-bootstrap/Alert'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import AddNewTodoForm from '../components/AddNewTodoForm'
 import AutoDismissingAlert from '../components/AutoDismissingAlert'
 import * as TodosAPI from '../services/TodosAPI'
+import useTodos from '../hooks/useTodos'
 
 const TodosPage = () => {
 	const location = useLocation()
 	const queryClient = useQueryClient()
-	const [searchParams, setSearchParams] = useSearchParams()
+	const [searchParams, _setSearchParams] = useSearchParams()
 	const searchParams_deletedTodo = searchParams.get("deleted")
 	const deletedTodo = Boolean(searchParams_deletedTodo)
 
 	const {
 		data: todos,
 		isError,
-	} = useQuery(['todos'], TodosAPI.getTodos)
+	} = useTodos()
 
 	const createPostMutation = useMutation({
 		mutationFn: TodosAPI.createTodo,
-		onSuccess: (data) => {
-			queryClient.setQueryData(['todos', data.id], data)
-			queryClient.invalidateQueries(['todos'], { exact: true })
+		onSuccess: (newTodo) => {
+			// queryClient.invalidateQueries(['todos'], { exact: true })
+
+			// instead of invalidating the ["todos"] query, we can construct
+			// new data based on the old data and the response from the create
+			// Todo request.
+			queryClient.setQueryData<Todos>(
+				['todos'], (prevTodos) => {
+					return [
+						...prevTodos ?? [],
+						newTodo,
+					]
+				}
+			)
+			// also insert the new todo into the query cache
+			queryClient.setQueryData(["todo", newTodo.id], newTodo)
+
 		}
 	})
 

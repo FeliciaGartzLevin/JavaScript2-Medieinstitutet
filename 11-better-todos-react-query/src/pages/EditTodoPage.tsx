@@ -26,9 +26,18 @@ const EditTodoPage = () => {
 
 	const updatePostMutation = useMutation({
 		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
-		onSuccess: (todo) => {
-			queryClient.setQueryData(['todos', todoId], todo)
-			queryClient.invalidateQueries(['todo', todoId], { exact: true })
+		onSuccess: async (todo) => {
+			// set the response from the mutation as the query cache for t
+			queryClient.setQueryData(['todo', todoId], todo)
+
+			// queryClient.invalidateQueries(['todos'])
+			// await queryClient.prefetchQuery(
+			// 	['todos'],
+			// 	TodosAPI.getTodos
+			// )
+			// ist för ovan kan man göra detta på en rad:
+			queryClient.refetchQueries({ queryKey: ["todos"] })
+
 
 			// redirect user to /todos/:id
 			navigate(`/todos/${todo.id}`)
@@ -84,12 +93,12 @@ const EditTodoPage = () => {
 					<Form.Control
 						type="text"
 						placeholder="Enter the new title"
-						onChange={(e) => setNewTodoTitle(e.target.value)}
+						onChange={(e: any) => setNewTodoTitle(e.target.value)}
 						value={newTodoTitle}
 					/>
 				</Form.Group>
 
-				<Button variant="primary" type="submit">
+				<Button variant="primary" type="submit" disabled={updatePostMutation.isLoading}>
 					Save
 				</Button>
 			</Form>
