@@ -1,27 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import Alert from 'react-bootstrap/Alert'
 import { NewTodo } from '../types/TodosAPI.types'
 import AddNewTodoForm from '../components/AddNewTodoForm'
-import * as TodosAPI from '../services/TodosAPI'
+import useCreateTodo from '../hooks/useCreateTodo'
 
 const CreateTodoPage = () => {
-	const navigate = useNavigate()
-	const queryClient = useQueryClient()
 
-	const createPostMutation = useMutation({
-		mutationFn: TodosAPI.createTodo,
-		onSuccess: (data) => {
-
-			queryClient.setQueryData(['todos', data.id], data)
-			queryClient.invalidateQueries(['todos'])
-
-			setTimeout(() => {
-				navigate("/todos")
-			}, 2000)
-
-		}
-	})
+	const createPostMutation = useCreateTodo()
 
 	// Create a new todo in the API
 	const addTodo = async (todo: NewTodo) => {
