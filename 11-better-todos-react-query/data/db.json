@@ -1,44 +1,29 @@
 {
   "todos": [
     {
-      "title": "Learn React Bootstrap",
-      "completed": true,
-      "id": 1
-    },
-    {
-      "title": "Learn React Router",
-      "completed": false,
-      "id": 2
-    },
-    {
-      "title": "Learn stuff",
-      "completed": true,
-      "id": 3
-    },
-    {
-      "title": "Look mommy, a todo 🤩!",
-      "completed": false,
-      "id": 4
-    },
-    {
       "title": "I !<3 TypeScript",
       "completed": false,
       "id": 6
     },
     {
-      "title": "super new todo",
+      "title": "Clean house",
       "completed": false,
       "id": 7
     },
     {
-      "title": "snail",
+      "title": "YOOOOLOOOO",
       "completed": false,
       "id": 8
     },
     {
-      "title": "mum",
+      "title": "🥗🥙🌮🥨🥓☘🌵🌾",
       "completed": false,
       "id": 9
+    },
+    {
+      "title": "🍉🍐🍑🍌🍍🍋🍒",
+      "completed": false,
+      "id": 10
     }
   ]
 }

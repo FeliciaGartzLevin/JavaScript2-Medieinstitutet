@@ -1,14 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { updateTodoVariables } from '../types/TodosAPI.types'
-import * as TodosAPI from '../services/TodosAPI'
+import useUpdateTodo from '../hooks/useUpdateTodo.ts'
+import useTodo from '../hooks/useTodo.ts'
 
 const EditTodoPage = () => {
-	const queryClient = useQueryClient()
 	const [newTodoTitle, setNewTodoTitle] = useState("")
 	const navigate = useNavigate()
 	const { id } = useParams()
@@ -19,32 +17,12 @@ const EditTodoPage = () => {
 		isError: error,
 		isLoading: loading,
 		refetch: getTodo
-	} = useQuery(
-		['todo', todoId],
-		() => TodosAPI.getTodo(todoId)
-	)
+	} = useTodo(todoId)
 
-	const updatePostMutation = useMutation({
-		mutationFn: ({ id, updatedTodo }: updateTodoVariables) => TodosAPI.updateTodo(id, updatedTodo),
-		onSuccess: async (todo) => {
-			// set the response from the mutation as the query cache for t
-			queryClient.setQueryData(['todo', todoId], todo)
-
-			// queryClient.invalidateQueries(['todos'])
-			// await queryClient.prefetchQuery(
-			// 	['todos'],
-			// 	TodosAPI.getTodos
-			// )
-			// ist för ovan kan man göra detta på en rad:
-			queryClient.refetchQueries({ queryKey: ["todos"] })
-
-
-			// redirect user to /todos/:id
-			navigate(`/todos/${todo.id}`)
-		}
-	}
-	)
-
+	const updateTodoTitleMutation = useUpdateTodo(todoId, () => {
+		// redirect user to /todos/:id
+		navigate(`/todos/${todoId}`)
+	})
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -54,12 +32,8 @@ const EditTodoPage = () => {
 		}
 
 		// Update a todo in the api
-		updatePostMutation.mutateAsync({
-			id: todoId,
-			updatedTodo: {
-				title: newTodoTitle
-			}
-		})
+		updateTodoTitleMutation.mutate({ title: newTodoTitle, completed: false })
+
 	}
 
 	useEffect(() => {
@@ -98,7 +72,7 @@ const EditTodoPage = () => {
 					/>
 				</Form.Group>
 
-				<Button variant="primary" type="submit" disabled={updatePostMutation.isLoading}>
+				<Button variant="primary" type="submit" disabled={updateTodoTitleMutation.isLoading}>
 					Save
 				</Button>
 			</Form>
