@@ -1,19 +1,16 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Todo, Todos } from '../types/TodosAPI.types'
-import * as TodosAPI from '../services/TodosAPI'
+import { Link, useParams } from 'react-router-dom'
+import { Todo } from '../types/TodosAPI.types'
 import ConfirmationModal from '../components/ConfirmationModal'
 import useTodo from '../hooks/useTodo'
 import useUpdateTodo from '../hooks/useUpdateTodo.ts'
+import useDeleteTodo from '../hooks/useDeleteTodo.ts'
 
 const TodoPage = () => {
 	const [queryEnabled, setQueryEnabled] = useState(true)
-	const queryClient = useQueryClient()
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
-	const navigate = useNavigate()
 	const { id } = useParams()
 	const todoId = Number(id)
 
@@ -25,31 +22,8 @@ const TodoPage = () => {
 	} = useTodo(todoId, queryEnabled)
 
 
-	const deletePostMutation = useMutation({
-		mutationFn: () => TodosAPI.deleteTodo(todoId),
-		onSuccess: () => {
-			// disable query for this specific single todo
-			setQueryEnabled(false)
-
-			queryClient.removeQueries({ queryKey: ["todo", { id: todoId }] })
-			// invalidate the query for all todos
-			// queryClient.invalidateQueries(['todos'])
-
-			// modify query cache for ["todos"] and construct a new array with
-			// the deleted todo excluded
-			queryClient.setQueryData<Todos>(["todos"], (prevTodos) => {
-				return prevTodos?.filter(todo => todo.id !== todoId) ?? []
-			})
-
-			// Navigate user to `/todos` (using search params/query params)
-			navigate('/todos?deleted=true', {
-				replace: true,
-				state: {
-					deleted: true,
-				}
-			})
-		}
-
+	const deletePostMutation = useDeleteTodo(todoId, () => {
+		setQueryEnabled(false)
 	})
 
 	const togglePostMutation = useUpdateTodo(todoId)
