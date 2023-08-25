@@ -9,6 +9,7 @@ import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
 import './assets/scss/App.scss'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ToastContainer } from 'react-toastify'
 
 
 const App = () => {
@@ -39,7 +40,11 @@ const App = () => {
 			</Container>
 
 			<ReactQueryDevtools initialIsOpen={false} position='bottom-right' />
+			<ToastContainer
+				draggable={true}
+				newestOnTop={true}
 
+			/>
 		</div>
 	)
 }
