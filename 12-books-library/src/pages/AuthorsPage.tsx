@@ -1,6 +1,8 @@
+import Card from 'react-bootstrap/Card'
 import WarningAlert from '../components/alerts/WarningAlert'
-import AuthorList from '../components/AuthorList'
+// import AuthorList from '../components/AuthorList'
 import BSAuthorTable from '../components/BSAuthorTable'
+import CreateAuthorForm from '../components/forms/CreateAuthorForm'
 import useAuthors from '../hooks/useAuthors'
 
 const AuthorsPage = () => {
@@ -23,6 +25,15 @@ const AuthorsPage = () => {
 			{/* {authors && <AuthorList authors={authors} />} */}
 
 			{authors && <BSAuthorTable authors={authors} />}
+
+			<hr className="mb-5" />
+
+			<Card>
+				<Card.Body>
+					<Card.Title>Create Author</Card.Title>
+					<CreateAuthorForm />
+				</Card.Body>
+			</Card>
 		</>
 	)
 }
