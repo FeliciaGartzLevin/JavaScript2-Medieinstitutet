@@ -130,6 +130,11 @@
       "id": 9,
       "name": "Mr Fancy Pants",
       "date_of_birth": "1930-01-01"
+    },
+    {
+      "name": "SRE",
+      "date_of_birth": "2023-08-18",
+      "id": 10
     }
   ]
 }
