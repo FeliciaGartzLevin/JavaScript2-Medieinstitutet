@@ -1,13 +1,34 @@
+import { ColumnDef } from '@tanstack/react-table'
 import WarningAlert from '../components/alerts/WarningAlert'
-import BookList from '../components/BookList'
-import BSBookTable from '../components/BSBookTable'
+import PageTransition from '../components/animations/PageTransition'
+import TanstackBasicTable from '../components/TanstackBasicTable'
 import useBooks from '../hooks/useBooks'
+import { Book } from '../types/BooksAPI.types'
+
+const columns: ColumnDef<Book>[] = [
+	{
+		accessorKey: 'title',
+		header: 'Title',
+	},
+	{
+		accessorKey: 'author.name',
+		header: 'Author',
+	},
+	{
+		accessorKey: 'pages',
+		header: 'Pages',
+	},
+	{
+		accessorKey: 'published',
+		header: 'Published',
+	},
+]
 
 const BooksPage = () => {
 	const { data: books, isError, isLoading } = useBooks()
 
 	return (
-		<>
+		<PageTransition page="books-page">
 			<h1 className="mb-3">Books</h1>
 
 			{isError && (
@@ -20,11 +41,8 @@ const BooksPage = () => {
 				<p>Loading books...</p>
 			)}
 
-			{/* {books && <BookList books={books} />} */}
-
-			{books && <BSBookTable books={books} />}
-
-		</>
+			{books && <TanstackBasicTable columns={columns} data={books} />}
+		</PageTransition>
 	)
 }
 
