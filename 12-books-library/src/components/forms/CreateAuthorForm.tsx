@@ -1,12 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import useCreateAuthor from '../../hooks/useCreateAuthor'
 import { NewAuthor } from '../../types/BooksAPI.types'
+import { AuthorSchema, authorSchema } from '../../schemas/authorSchema'
 
 const CreateAuthorForm = () => {
-	const { handleSubmit, register, formState: { errors } } = useForm<NewAuthor>()
+	const { handleSubmit, register, formState: { errors } } = useForm<AuthorSchema>({
+		resolver: zodResolver(authorSchema)
+	})
 	const createAuthorMutation = useCreateAuthor()
 
 	const onCreateAuthorSubmit: SubmitHandler<NewAuthor> = (data) => {
@@ -22,10 +25,7 @@ const CreateAuthorForm = () => {
 				<Form.Control
 					type="text"
 					placeholder="Astrid Lindgren"
-					{...register('name', {
-						required: true,
-						minLength: 3,
-					})}
+					{...register('name')}
 				/>
 				{errors.name && <p className="text-danger">Y U ENTER TOO SHORT NAME?!</p>}
 			</Form.Group>
@@ -34,9 +34,7 @@ const CreateAuthorForm = () => {
 				<Form.Label>Date of Birth</Form.Label>
 				<Form.Control
 					type="date"
-					{...register('date_of_birth', {
-						required: true,
-					})}
+					{...register('date_of_birth')}
 				/>
 				{errors.date_of_birth && <p className="text-danger">Y U NO IS BORN?!</p>}
 			</Form.Group>
