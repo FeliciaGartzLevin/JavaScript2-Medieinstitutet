@@ -1,43 +1,21 @@
-import { collection, getDocs } from 'firebase/firestore'
-import { useEffect, useState } from 'react'
 import ListGroup from "react-bootstrap/ListGroup"
 import { Link } from "react-router-dom"
 import AddNewTodoForm from "../components/AddNewTodoForm"
-import { db } from '../services/firebase'
-import { NewTodo, Todo, Todos } from "../types/Todo.types"
+import { NewTodo } from "../types/Todo.types"
+import useGetTodos from '../hooks/useGetTodos'
 
 const TodosPage = () => {
-	const [todos, setTodos] = useState<Todos | null>(null)
+	const {
+		data: todos,
+		getData: getTodos,
+		loading
+	} = useGetTodos()
 
 	// Create a new todo in the API
 	const addTodo = (todo: NewTodo) => {
 		// 👻
 		console.log("Would add a new todo:", todo)
 	}
-
-	// Get todos
-	const getTodos = async () => {
-		// get reference to collection "todos"
-		const colRef = collection(db, "todos")
-
-		// get query snapshot of collection
-		const snapshot = await getDocs(colRef)
-
-		// loop over all docs
-		const data: Todos = snapshot.docs.map(doc => {
-			return {
-				_id: doc.id,
-				...doc.data(),
-			} as Todo
-		})
-
-		setTodos(data)
-	}
-
-	// Get todos on component mount
-	useEffect(() => {
-		getTodos()
-	}, [])
 
 	return (
 		<>
