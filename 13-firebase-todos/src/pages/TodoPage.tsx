@@ -1,23 +1,31 @@
 import { useState } from "react"
 import Button from "react-bootstrap/Button"
 import { Link, useParams } from "react-router-dom"
-import { Todo } from "../types/Todo.types"
 import ConfirmationModal from "../components/ConfirmationModal"
-
-const todo: Todo = {
-	id: "133713371337",
-	title: "Learn to fake better data 😅",
-	completed: true,
-}
+import useGetTodo from "../hooks/useGetTodo"
 
 const TodoPage = () => {
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 	const { id } = useParams()
-	const todoId = Number(id)
+
+	const documentId = id as string
+
+	const {
+		data: todo,
+		getData: getTodo,
+		loading
+	} = useGetTodo(documentId)
+
+	if (loading || !todo) {
+		return <p>Loading todo...</p>
+	}
 
 	return (
 		<>
-			<h1>{todo.title}</h1>
+			<div className="d-flex justify-content-between align-items-start">
+				<h1>{todo.title}</h1>
+				<Button variant="primary" onClick={() => getTodo(documentId)}>Refresh</Button>
+			</div>
 
 			<p>
 				<strong>Status:</strong>{" "}
@@ -32,7 +40,7 @@ const TodoPage = () => {
 					Toggle
 				</Button>
 
-				<Link to={`/todos/${todoId}/edit`}>
+				<Link to={`/todos/${id}/edit`}>
 					<Button variant="warning">Edit</Button>
 				</Link>
 
@@ -48,7 +56,7 @@ const TodoPage = () => {
 				show={showConfirmDelete}
 				onCancel={() => setShowConfirmDelete(false)}
 				onConfirm={() =>
-					console.log("Would delete todo with id:", todoId)
+					console.log("Would delete todo with id:", id)
 				}
 			>
 				U SURE BRO?!
