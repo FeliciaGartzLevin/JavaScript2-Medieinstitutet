@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react'
-import { DocumentData, getDocs } from 'firebase/firestore'
-import { createCollection } from '../services/firebase'
+import { CollectionReference, getDocs } from 'firebase/firestore'
 
-const useGetCollection = (collectionName: string) => {
-	const [data, setData] = useState<DocumentData | null>(null)
+const useGetCollection = <T>(colRef: CollectionReference<T>) => {
+	const [data, setData] = useState<T[] | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(false)
 
-	// Get todos
 	const getData = async () => {
 		setLoading(true)
 
 		// get query snapshot of collection
-		const snapshot = await getDocs(createCollection<DocumentData>(collectionName))
+		const snapshot = await getDocs(colRef)
 
 		if (!snapshot.docs) {
 			setData(null)
@@ -21,7 +19,7 @@ const useGetCollection = (collectionName: string) => {
 			return
 		}
 		// loop over all docs
-		const data: DocumentData = snapshot.docs.map(doc => {
+		const data: T[] = snapshot.docs.map(doc => {
 			return {
 				...doc.data(),
 				_id: doc.id,

@@ -1,16 +1,12 @@
 
+import { todosCol } from '../services/firebase'
+import { Todo } from '../types/Todo.types'
 import useGetCollection from './useGetCollection'
 
 const useGetTodos = () => {
 	//call generic hook to get collection
-	const { data, loading, getData, error } = useGetCollection('todos')
+	return useGetCollection<Todo>(todosCol)
 
-	return {
-		data,
-		getData,
-		loading,
-		error,
-	}
 }
 
 export default useGetTodos

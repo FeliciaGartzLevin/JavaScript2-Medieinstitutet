@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { NewTodo } from '../types/Todo.types'
+import CreateTodoForm from './forms/CreateTodoForm'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IProps {
@@ -9,21 +10,21 @@ interface IProps {
 const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 	const [newTodoTitle, setNewTodoTitle] = useState("")
 	const newTodoTitleRef = useRef<HTMLInputElement>(null)
+	/*
+		const handleSubmit = (e: React.FormEvent) => {
+			// stop form from submitting
+			e.preventDefault()
 
-	const handleSubmit = (e: React.FormEvent) => {
-		// stop form from submitting
-		e.preventDefault()
+			// create a new todo and set a new todos state
+			const newTodo: NewTodo = {
+				title: newTodoTitle,
+				completed: false,
+			}
+			onAddTodo(newTodo)   // <-- calls `addTodo()` in `App.tsx`
 
-		// create a new todo and set a new todos state
-		const newTodo: NewTodo = {
-			title: newTodoTitle,
-			completed: false,
-		}
-		onAddTodo(newTodo)   // <-- calls `addTodo()` in `App.tsx`
-
-		// clear newTodoTitle state
-		setNewTodoTitle("")
-	}
+			// clear newTodoTitle state
+			setNewTodoTitle("")
+		} */
 
 	// On component mount, focus on input field
 	useEffect(() => {
@@ -33,24 +34,7 @@ const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 	// console.log("AddNewTodoForm rendering...")
 
 	return (
-		<form onSubmit={handleSubmit} className="mb-3">
-			<div className="input-group">
-				<input
-					ref={newTodoTitleRef}
-					type="text"
-					className="form-control"
-					placeholder="Todo title"
-					onChange={e => setNewTodoTitle(e.target.value)}
-					value={newTodoTitle}
-				/>
-
-				<button
-					disabled={!newTodoTitle.trim()}
-					type="submit"
-					className="btn btn-success"
-				>Create</button>
-			</div>
-		</form>
+		<CreateTodoForm />
 	)
 }
 
