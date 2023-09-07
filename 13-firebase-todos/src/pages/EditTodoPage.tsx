@@ -26,7 +26,6 @@ const EditTodoPage = () => {
 
 	const {
 		data: todo,
-		getData: getTodo,
 		loading
 	} = useGetTodo(documentId)
 
@@ -47,9 +46,6 @@ const EditTodoPage = () => {
 			success: "🤩 Todo was saved successfully",
 			error: "😬 Unable to save todo"
 		})
-
-		// Get the updated todo
-		await getTodo()
 
 	}
 
