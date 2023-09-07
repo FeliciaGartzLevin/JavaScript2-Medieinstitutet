@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
 
 // This is just a helper to add the type to the db responses
-export const createCollection = <T = DocumentData>(collectionName: string) => {
+const createCollection = <T = DocumentData>(collectionName: string) => {
 	return collection(db, collectionName) as CollectionReference<T>
 }
 

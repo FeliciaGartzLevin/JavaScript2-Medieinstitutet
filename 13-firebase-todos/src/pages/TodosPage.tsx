@@ -3,6 +3,9 @@ import { Link } from "react-router-dom"
 import AddNewTodoForm from "../components/AddNewTodoForm"
 import { NewTodo } from "../types/Todo.types"
 import useGetTodos from '../hooks/useGetTodos'
+import { todosCol } from "../services/firebase"
+import { doc, setDoc } from "firebase/firestore"
+import { toast } from "react-toastify"
 
 const TodosPage = () => {
 	const {
@@ -11,10 +14,17 @@ const TodosPage = () => {
 		loading
 	} = useGetTodos()
 
-	// Create a new todo in the API
-	const addTodo = (todo: NewTodo) => {
-		// 👻
-		console.log("Would add a new todo:", todo)
+	// add new todo to firebase
+	const addTodo = async (todo: NewTodo) => {
+
+		// Add a new document with a generated ID
+		const docRef = doc(todosCol)
+
+		// Set the contents of the document
+		await setDoc(docRef, todo)
+
+		// 🥂
+		toast.success("Yay, even MORE stuff to do... 😁")
 	}
 
 	return (
