@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"
 import { CollectionReference, DocumentData, collection, getFirestore } from "firebase/firestore"
-import { Todo } from "../types/Todo.types"
+import { NewTodo, Todo } from "../types/Todo.types"
 
 // Your web app's Firebase configuration
 
@@ -26,6 +26,7 @@ const createCollection = <T = DocumentData>(collectionName: string) => {
 
 // const todosCol = collection(db, "todos") as CollectionReference<Todo>
 export const todosCol = createCollection<Todo>("todos")
+export const newTodosCol = createCollection<NewTodo>("todos")
 
 
 export default app

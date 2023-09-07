@@ -1,38 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { NewTodo } from '../types/Todo.types'
+import React, { useEffect } from 'react'
+import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
-import Button from 'react-bootstrap/Button'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { NewTodoFormData } from '../types/Todo.types'
 
 interface IProps {
-	onAddTodo: (todo: NewTodo) => Promise<void>
-}
-
-type FormData = {
-	title: string
+	onAddTodo: (data: NewTodoFormData) => Promise<void>
 }
 
 const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
-	const { handleSubmit, register, reset, formState: { errors, isSubmitSuccessful } } = useForm<FormData>()
+	const { handleSubmit, register, formState: { errors, isSubmitSuccessful }, reset } = useForm<NewTodoFormData>()
 
-	const onCreateTodoSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-
-		// create a new todo-object
-		const newTodo: NewTodo = {
-			title: data.title,
-			completed: false,
-		}
-		await onAddTodo(newTodo)   // <-- calls `addTodo()` in `TodosPage.tsx`
-
+	const onFormSubmit: SubmitHandler<NewTodoFormData> = async (data: NewTodoFormData) => {
+		// Pass form data along to parent component
+		await onAddTodo(data)   // <-- calls `addTodo()` in `App.tsx`
 	}
 
 	useEffect(() => {
+		// Reset form when submit is successful
 		reset()
 	}, [isSubmitSuccessful, reset])
 
 	return (
-		<Form onSubmit={handleSubmit(onCreateTodoSubmit)} className="mb-3">
+		<Form onSubmit={handleSubmit(onFormSubmit)} className="mb-3">
 			<InputGroup>
 				<Form.Control
 					type="text"
@@ -41,7 +32,7 @@ const AddNewTodoForm: React.FC<IProps> = ({ onAddTodo }) => {
 					{...register('title', {
 						required: "You have to write something at least...",
 						minLength: {
-							value: 2,
+							value: 5,
 							message: "That's too short to be a todo, better do it right now instead!"
 						},
 					})}
