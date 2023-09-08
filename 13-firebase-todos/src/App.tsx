@@ -8,6 +8,7 @@ import NotFound from './pages/NotFound'
 import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
 import './assets/scss/App.scss'
+import SignupPage from './pages/SignupPage'
 
 const App = () => {
 	return (
@@ -17,6 +18,8 @@ const App = () => {
 			<Container className="py-3">
 				<Routes>
 					<Route path="/" element={<HomePage />} />
+
+					<Route path="/signup" element={<SignupPage />} />
 
 					<Route path="/todos">
 						{/* /todos */}

@@ -51,10 +51,10 @@ const TodosPage = () => {
 							to={`/todos/${todo._id}`}
 						>
 							<div className="d-flex justify-content-between align-items-center">
-								<span className="todo-title">{todo.title}</span>
-								<span className="small text-muted created">
+								{todo.title && <span className="todo-title">{todo.title}</span>}
+								{todo.created_at && <span className="small text-muted created">
 									{firebaseTimestampToString(todo.created_at)}
-								</span>
+								</span>}
 							</div>
 						</ListGroup.Item>
 					))}
