@@ -1,14 +1,21 @@
-import { CollectionReference, onSnapshot } from 'firebase/firestore'
+import { CollectionReference, QueryConstraint, onSnapshot, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
-const useStreamCollection = <T>(colRef: CollectionReference<T>) => {
+const useStreamCollection = <T>(
+	colRef: CollectionReference<T>,
+	...queryConstraints: QueryConstraint[]
+) => {
 	const [data, setData] = useState<T[] | null>(null)
 	const [loading, setLoading] = useState(true)
 
+
 	// Get data on component mount
 	useEffect(() => {
+		// Construct a query reference
+		const queryRef = query(colRef, ...queryConstraints)
+
 		// Subscribe to changes in the collection
-		const unsubscribe = onSnapshot(colRef, (snapshot) => {
+		const unsubscribe = onSnapshot(queryRef, (snapshot) => {
 			// loop over all docs
 			const data: T[] = snapshot.docs.map(doc => {
 				return {
