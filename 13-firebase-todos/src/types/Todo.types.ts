@@ -12,6 +12,7 @@ export type PartialTodo = Partial<Todo>
 
 export type Todos = Todo[]
 
-export type NewTodoFormData = {
+export type TodoFormData = {
 	title: string
+	completed: boolean
 }
