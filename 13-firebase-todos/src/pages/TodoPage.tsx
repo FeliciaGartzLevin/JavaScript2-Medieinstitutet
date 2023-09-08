@@ -6,6 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import ConfirmationModal from "../components/ConfirmationModal"
 import useGetTodo from "../hooks/useGetTodo"
 import { todosCol } from '../services/firebase'
+import { firebaseTimestampToString } from '../helpers/time'
 
 const TodoPage = () => {
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
@@ -48,6 +49,12 @@ const TodoPage = () => {
 			<p>
 				<strong>Status:</strong>{" "}
 				{todo.completed ? "Completed" : "Not completed"}
+			</p>
+			<p>
+				Created at&nbsp;
+				<span className="small text-muted created">
+					{firebaseTimestampToString(todo.created_at)}
+				</span>
 			</p>
 
 			<div className="buttons mb-3">

@@ -15,7 +15,7 @@ const useStreamCollection = <T>(
 		const queryRef = query(colRef, ...queryConstraints)
 
 		// Subscribe to changes in the collection
-		const unsubscribe = onSnapshot(queryRef, (snapshot) => {
+		const unsubscribe = onSnapshot(colRef, (snapshot) => {
 			// loop over all docs
 			const data: T[] = snapshot.docs.map(doc => {
 				return {
@@ -30,6 +30,7 @@ const useStreamCollection = <T>(
 
 		// Return unsubscribe function as cleanup
 		return unsubscribe
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [colRef])
 
 	return {

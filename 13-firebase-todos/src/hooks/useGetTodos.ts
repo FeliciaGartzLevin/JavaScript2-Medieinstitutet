@@ -6,7 +6,7 @@ import useStreamCollection from './useStreamCollection'
 
 const useGetTodos = () => {
 	//call generic hook to get collection
-	return useStreamCollection<Todo>(todosCol, orderBy('title'))
+	return useStreamCollection<Todo>(todosCol, orderBy('completed'), orderBy('title'))
 
 }
 
