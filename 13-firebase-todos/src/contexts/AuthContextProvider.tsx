@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
+	CompleteFn,
 	User,
 	UserCredential,
 	createUserWithEmailAndPassword,
@@ -7,7 +8,7 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 } from 'firebase/auth'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { auth } from '../services/firebase'
 
 type AuthContextType = {
@@ -16,6 +17,9 @@ type AuthContextType = {
 	logout: () => Promise<void>
 	signup: (email: string, password: string) => Promise<UserCredential>
 	userEmail: string | null
+	isLoggedIn: boolean
+	// authStateErrorMsg: string | null
+
 }
 
 // This creates the actual context and sets the context's initial/default value
@@ -28,13 +32,15 @@ type AuthContextProps = {
 const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
 	const [userEmail, setUserEmail] = useState<string | null>(null)
-	// const [user, setUser] = useState<User | null>(null)
+	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	console.log('isLoggedIn:', isLoggedIn)
 
 	const login = (email: string, password: string) => {
 		return signInWithEmailAndPassword(auth, email, password)
 	}
 
 	const logout = () => {
+		setIsLoggedIn(false)
 		return signOut(auth)
 	}
 
@@ -43,11 +49,20 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 	}
 
 	// add auth-state observer here (somehow... 😈)
-	onAuthStateChanged(auth, (currentUser) => {
-		if (!currentUser) return
-		setCurrentUser(currentUser)
-		console.log('onAuthStateChanged to currentUser:', currentUser)
-	})
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+			if (!currentUser) return
+			setCurrentUser(currentUser)
+			setIsLoggedIn(true)
+			console.log('onAuthStateChanged to currentUser:', currentUser)
+		})
+
+		return () => {
+			setIsLoggedIn(false)
+			unsubscribe
+		}
+
+	}, [onAuthStateChanged])
 
 	return (
 		<AuthContext.Provider value={{
@@ -56,6 +71,8 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 			logout,
 			signup,
 			userEmail,
+			isLoggedIn
+			// authStateErrorMsg
 		}}>
 			{children}
 		</AuthContext.Provider>

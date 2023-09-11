@@ -1,4 +1,3 @@
-import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
@@ -9,13 +8,16 @@ import { Link, useNavigate } from 'react-router-dom'
 import { LoginCredentials } from '../types/User.types'
 import useAuth from '../hooks/useAuth'
 import { toast } from 'react-toastify'
+import { useState } from 'react'
 
 const LoginPage = () => {
 	const { handleSubmit, register, formState: { errors } } = useForm<LoginCredentials>()
+	const [isLoading, setIsLoading] = useState(false)
 	const { login } = useAuth()
 	const navigate = useNavigate()
 
 	const onLogin: SubmitHandler<LoginCredentials> = async (data) => {
+		setIsLoading(true)
 		try {
 			// log in user
 			const userCredential = await login(data.email, data.password)
@@ -23,13 +25,15 @@ const LoginPage = () => {
 
 			// navigate to homepage
 			navigate('/')
-
+			setIsLoading(false)
+			return
 		} catch (err: any) {
 
 			// console.log('err.code:', err.code)
 			toast.error(
 				`An error occured: ${err.code}`
 			)
+			setIsLoading(false)
 			return
 		}
 
@@ -69,7 +73,6 @@ const LoginPage = () => {
 									})}
 								/>
 								{errors.password && <p className="invalid">{errors.password.message ?? "Invalid value"}</p>}
-								<Form.Text>At least 6 characters</Form.Text>
 							</Form.Group>
 
 							<Button variant="primary" type="submit">Log In</Button>
