@@ -1,4 +1,3 @@
-import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
@@ -10,7 +9,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { SignUpCredentials } from '../types/User.types'
 import useAuth from '../hooks/useAuth'
 import { toast } from 'react-toastify'
-import ErrorToast from '../components/ErrorToast'
 
 const SignupPage = () => {
 	const { handleSubmit, register, watch, formState: { errors } } = useForm<SignUpCredentials>()

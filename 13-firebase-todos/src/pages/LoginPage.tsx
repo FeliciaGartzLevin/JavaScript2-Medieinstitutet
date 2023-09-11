@@ -7,12 +7,32 @@ import Row from 'react-bootstrap/Row'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { LoginCredentials } from '../types/User.types'
+import useAuth from '../hooks/useAuth'
+import { toast } from 'react-toastify'
 
 const LoginPage = () => {
 	const { handleSubmit, register, formState: { errors } } = useForm<LoginCredentials>()
+	const { login } = useAuth()
+	const navigate = useNavigate()
 
 	const onLogin: SubmitHandler<LoginCredentials> = async (data) => {
-		console.log("Would log in user", data)
+		try {
+			// log in user
+			const userCredential = await login(data.email, data.password)
+			console.log('Logged in user with useCredential:', userCredential)
+
+			// navigate to homepage
+			navigate('/')
+
+		} catch (err: any) {
+
+			// console.log('err.code:', err.code)
+			toast.error(
+				`An error occured: ${err.code}`
+			)
+			return
+		}
+
 	}
 
 	return (

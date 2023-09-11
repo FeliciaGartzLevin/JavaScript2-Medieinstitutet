@@ -9,6 +9,7 @@ import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
 import './assets/scss/App.scss'
 import SignupPage from './pages/SignupPage'
+import LoginPage from './pages/LoginPage'
 
 const App = () => {
 	return (
@@ -20,6 +21,7 @@ const App = () => {
 					<Route path="/" element={<HomePage />} />
 
 					<Route path="/signup" element={<SignupPage />} />
+					<Route path="/login" element={<LoginPage />} />
 
 					<Route path="/todos">
 						{/* /todos */}
