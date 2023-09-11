@@ -9,10 +9,13 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { SignUpCredentials } from '../types/User.types'
 import useAuth from '../hooks/useAuth'
+import { toast } from 'react-toastify'
+import ErrorToast from '../components/ErrorToast'
 
 const SignupPage = () => {
 	const { handleSubmit, register, watch, formState: { errors } } = useForm<SignUpCredentials>()
 	const { signup } = useAuth()
+	const navigate = useNavigate()
 
 	// Watch the current value of `password` form field
 	const passwordRef = useRef("")
@@ -21,9 +24,21 @@ const SignupPage = () => {
 	const onSignup: SubmitHandler<SignUpCredentials> = async (data) => {
 		console.log("Would sign up user", data)
 
-		// Pass email and password along to signup in auth-context
-		const userCredential = await signup(data.email, data.password)
-		console.log("YAYYYYY I GOTS ACCOUNT!!!!!!!!!!!", userCredential)
+		try {
+			// Pass email and password along to signup in auth-context
+			const userCredential = await signup(data.email, data.password)
+
+			console.log("YAYYYYY I GOTS ACCOUNT!!!!!!!!!!!", userCredential)
+
+			navigate('/')
+			return
+		} catch (err: any) {
+			// console.log('err.code:', err.code)
+			toast.error(
+				`An error occured: ${err.code}`
+			)
+			return
+		}
 	}
 
 	return (

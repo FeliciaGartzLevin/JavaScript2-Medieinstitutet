@@ -12,7 +12,7 @@ const LoginPage = () => {
 	const { handleSubmit, register, formState: { errors } } = useForm<LoginCredentials>()
 
 	const onLogin: SubmitHandler<LoginCredentials> = async (data) => {
-		console.log("WOuld log in user", data)
+		console.log("Would log in user", data)
 	}
 
 	return (
