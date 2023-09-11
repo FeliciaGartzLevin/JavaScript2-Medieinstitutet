@@ -18,6 +18,7 @@ type AuthContextType = {
 	signup: (email: string, password: string) => Promise<UserCredential>
 	userEmail: string | null
 	isLoggedIn: boolean
+	isLoading: boolean
 	// authStateErrorMsg: string | null
 
 }
@@ -33,9 +34,11 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
 	const [userEmail, setUserEmail] = useState<string | null>(null)
 	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 	console.log('isLoggedIn:', isLoggedIn)
 
 	const login = (email: string, password: string) => {
+		setIsLoading(true)
 		return signInWithEmailAndPassword(auth, email, password)
 	}
 
@@ -54,12 +57,16 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 			if (!currentUser) return
 			setCurrentUser(currentUser)
 			setIsLoggedIn(true)
+			setIsLoading(false)
 			console.log('onAuthStateChanged to currentUser:', currentUser)
+
 		})
 
 		return () => {
+			setIsLoading(true)
 			setIsLoggedIn(false)
 			unsubscribe
+			setIsLoading(false)
 		}
 
 	}, [onAuthStateChanged])
@@ -71,7 +78,8 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 			logout,
 			signup,
 			userEmail,
-			isLoggedIn
+			isLoggedIn,
+			isLoading,
 			// authStateErrorMsg
 		}}>
 			{children}
