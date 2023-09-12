@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
-	CompleteFn,
 	User,
 	UserCredential,
 	createUserWithEmailAndPassword,

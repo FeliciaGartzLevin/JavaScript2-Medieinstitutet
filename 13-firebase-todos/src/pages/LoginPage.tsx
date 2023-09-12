@@ -9,15 +9,17 @@ import { LoginCredentials } from '../types/User.types'
 import useAuth from '../hooks/useAuth'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { FirebaseError } from 'firebase/app'
 
 const LoginPage = () => {
 	const { handleSubmit, register, formState: { errors } } = useForm<LoginCredentials>()
-	const [isLoading, setIsLoading] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string | null>(null)
+	const [loading, setLoading] = useState(false)
 	const { login } = useAuth()
 	const navigate = useNavigate()
 
 	const onLogin: SubmitHandler<LoginCredentials> = async (data) => {
-		setIsLoading(true)
+		setErrorMessage(null)
 		try {
 			// log in user
 			const userCredential = await login(data.email, data.password)
@@ -25,16 +27,20 @@ const LoginPage = () => {
 
 			// navigate to homepage
 			navigate('/')
-			setIsLoading(false)
-			return
-		} catch (err: any) {
 
-			// console.log('err.code:', err.code)
-			toast.error(
-				`An error occured: ${err.code}`
-			)
-			setIsLoading(false)
-			return
+		} catch (error: any) {
+			if (error instanceof FirebaseError) {
+				setErrorMessage(error.message)
+				toast.error(
+					`An error occured: ${error.code}`
+				)
+			} else {
+				setErrorMessage("Something went wrong. Have you tried turning it off and on again?")
+				toast.error(
+					`An error occured: ${error.code}`
+				)
+			}
+			setLoading(false)
 		}
 
 	}
@@ -75,8 +81,15 @@ const LoginPage = () => {
 								{errors.password && <p className="invalid">{errors.password.message ?? "Invalid value"}</p>}
 							</Form.Group>
 
-							<Button variant="primary" type="submit">Log In</Button>
-						</Form>
+							<Button
+								disabled={loading}
+								variant="primary"
+								type="submit"
+							>
+								{loading
+									? "Logging in..."
+									: "Log In"}
+							</Button>						</Form>
 
 						<div className="text-center">
 							<Link to="/forgot-password">Forgot Password?</Link>

@@ -1,9 +1,11 @@
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
+import Alert from 'react-bootstrap/Alert'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { FirebaseError } from 'firebase/app'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { SignUpCredentials } from '../types/User.types'
@@ -12,6 +14,8 @@ import { toast } from 'react-toastify'
 
 const SignupPage = () => {
 	const { handleSubmit, register, watch, formState: { errors } } = useForm<SignUpCredentials>()
+	const [errorMessage, setErrorMessage] = useState<string | null>(null)
+	const [loading, setLoading] = useState(false)
 	const { signup } = useAuth()
 	const navigate = useNavigate()
 
@@ -20,22 +24,32 @@ const SignupPage = () => {
 	passwordRef.current = watch('password')
 
 	const onSignup: SubmitHandler<SignUpCredentials> = async (data) => {
-		console.log("Would sign up user", data)
+		setErrorMessage(null)
 
 		try {
+			setLoading(true)
+
 			// Pass email and password along to signup in auth-context
 			const userCredential = await signup(data.email, data.password)
 
 			console.log("Account created", userCredential)
 
 			navigate('/')
-			return
+
 		} catch (err: any) {
-			// console.log('err.code:', err.code)
-			toast.error(
-				`An error occured: ${err.code}`
-			)
-			return
+			if (err instanceof FirebaseError) {
+				setErrorMessage(err.message)
+				toast.error(
+					`An error occured: ${err.message}`
+				)
+
+			} else {
+				setErrorMessage("Something went wrong. Have you tried turning it off and on again?")
+				toast.error(
+					`Unknown error: ${err}`
+				)
+			}
+			setLoading(false)
 		}
 	}
 
@@ -45,6 +59,9 @@ const SignupPage = () => {
 				<Card>
 					<Card.Body>
 						<Card.Title className="mb-3">Sign Up</Card.Title>
+
+						{errorMessage && (<Alert variant="danger">{errorMessage}</Alert>)}
+
 
 						<Form onSubmit={handleSubmit(onSignup)}>
 							<Form.Group controlId="email" className="mb-3">
@@ -95,7 +112,15 @@ const SignupPage = () => {
 								{errors.passwordConfirm && <p className="invalid">{errors.passwordConfirm.message ?? "Invalid value"}</p>}
 							</Form.Group>
 
-							<Button variant="primary" type="submit">Create Account</Button>
+							<Button
+								disabled={loading}
+								variant="primary"
+								type="submit"
+							>
+								{loading
+									? "Creating account..."
+									: "Create Account"}
+							</Button>
 						</Form>
 
 						{/* <div className="text-center">
