@@ -1,48 +1,66 @@
-import Container from 'react-bootstrap/Container'
 import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
+import RequireAuth from './components/RequireAuth'
 import Navigation from './pages/partials/Navigation'
 import EditTodoPage from './pages/EditTodoPage'
 import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import LogoutPage from './pages/LogoutPage'
 import NotFound from './pages/NotFound'
+import SignupPage from './pages/SignupPage'
 import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
+import UpdateProfile from './pages/UpdateProfile'
 import './assets/scss/App.scss'
-import SignupPage from './pages/SignupPage'
-import LoginPage from './pages/LoginPage'
-import useAuth from './hooks/useAuth'
 
 const App = () => {
-	const { isLoggedIn } = useAuth()
-
 	return (
-
 		<div id="App">
 			<Navigation />
-			<Container className="py-3">
-				<Routes>
-					<Route path="/" element={<HomePage />} />
 
-					<Route path="/signup" element={<SignupPage />} />
-					<Route path="/login" element={<LoginPage />} />
+			<Routes>
+				{/* Guest Routes */}
+				<Route path="*" element={<NotFound />} />
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/logout" element={<LogoutPage />} />
+				<Route path="/signup" element={<SignupPage />} />
 
-					{isLoggedIn && (
-						<Route path="/todos">
-							{/* /todos */}
-							<Route path="" element={<TodosPage />} />
+				{/* Protected Routes */}
+				<Route path="/" element={
+					<RequireAuth>
+						<HomePage />
+					</RequireAuth>
+				} />
 
-							{/* /todos/:id */}
-							<Route path=":id" element={<TodoPage />} />
+				<Route path="/todos">
+					{/* /todos */}
+					<Route path="" element={
+						<RequireAuth>
+							<TodosPage />
+						</RequireAuth>
+					} />
 
-							{/* /todos/:id/edit */}
-							<Route path=":id/edit" element={<EditTodoPage />} />
-						</Route>
-					)}
+					{/* /todos/:id */}
+					<Route path=":id" element={
+						<RequireAuth>
+							<TodoPage />
+						</RequireAuth>
+					} />
 
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</Container>
+					{/* /todos/:id/edit */}
+					<Route path=":id/edit" element={
+						<RequireAuth>
+							<EditTodoPage />
+						</RequireAuth>
+					} />
+				</Route>
 
+				<Route path="/update-profile" element={
+					<RequireAuth>
+						<UpdateProfile />
+					</RequireAuth>
+				} />
+			</Routes>
 
 			<ToastContainer
 				theme='colored'

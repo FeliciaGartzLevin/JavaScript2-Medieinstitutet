@@ -8,32 +8,39 @@ import Container from "react-bootstrap/Container"
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
-import { SignUpCredentials } from '../types/User.types'
+import { UpdateProfileFormData } from '../types/User.types'
 
-const SignupPage = () => {
+const UpdateProfile = () => {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
-	const { handleSubmit, register, watch, formState: { errors } } = useForm<SignUpCredentials>()
+	const { handleSubmit, register, watch, formState: { errors } } = useForm<UpdateProfileFormData>()
 	const { signup } = useAuth()
-	const navigate = useNavigate()
 
 	// Watch the current value of `password` form field
 	const passwordRef = useRef("")
 	passwordRef.current = watch('password')
 
-	const onSignup: SubmitHandler<SignUpCredentials> = async (data) => {
+	const onUpdateProfile: SubmitHandler<UpdateProfileFormData> = async (data) => {
 		// Clear any previous error state
 		setErrorMessage(null)
 
-		// Try to sign up the user with the provided credentials
+		// Update user profile
 		try {
+			// Disable update-button while update is in progress
 			setLoading(true)
-			await signup(data.email, data.password)
 
-			// If successful, redirect to the home page
-			navigate('/')
+			// Update displayName *ONLY* if it has changed
+
+			// Update email *ONLY* if it has changed
+
+			// Update password *ONLY* if the user has provided a new password to set
+
+			// Reload user data
+
+			// Show success toast 🥂
+
+			// Enable update-button again
 
 		} catch (error) {
 			if (error instanceof FirebaseError) {
@@ -51,21 +58,36 @@ const SignupPage = () => {
 				<Col md={{ span: 6, offset: 3 }}>
 					<Card>
 						<Card.Body>
-							<Card.Title className="mb-3">Sign Up</Card.Title>
+							<Card.Title className="mb-3">Update Profile</Card.Title>
 
 							{errorMessage && (<Alert variant="danger">{errorMessage}</Alert>)}
 
-							<Form onSubmit={handleSubmit(onSignup)}>
+							<Form onSubmit={handleSubmit(onUpdateProfile)}>
+								{/*
+									Fill the displayName, photoURL and email form fields with their current value!
+								*/}
+								<Form.Group controlId="displayName" className="mb-3">
+									<Form.Label>Name</Form.Label>
+									<Form.Control
+										placeholder="Sean Banan"
+										type="text"
+									/>
+								</Form.Group>
+
+								<Form.Group controlId="photoURL" className="mb-3">
+									<Form.Label>Photo URL</Form.Label>
+									<Form.Control
+										placeholder="https://www.chiquita.com/Bananana.jpg"
+										type="url"
+									/>
+								</Form.Group>
+
 								<Form.Group controlId="email" className="mb-3">
 									<Form.Label>Email</Form.Label>
 									<Form.Control
 										placeholder="snelhest2000@horsemail.com"
 										type="email"
-										{...register('email', {
-											required: "You have to enter an email",
-										})}
 									/>
-									{errors.email && <p className="invalid">{errors.email.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Form.Group controlId="password" className="mb-3">
@@ -73,15 +95,7 @@ const SignupPage = () => {
 									<Form.Control
 										type="password"
 										autoComplete="new-password"
-										{...register('password', {
-											required: "You're kidding, right? Enter a password, stupid",
-											minLength: {
-												value: 3,
-												message: "Please enter at least 3 characters"
-											},
-										})}
 									/>
-									{errors.password && <p className="invalid">{errors.password.message ?? "Invalid value"}</p>}
 									<Form.Text>At least 6 characters</Form.Text>
 								</Form.Group>
 
@@ -90,18 +104,7 @@ const SignupPage = () => {
 									<Form.Control
 										type="password"
 										autoComplete="off"
-										{...register('passwordConfirm', {
-											required: "Enter your password again.........",
-											minLength: {
-												value: 3,
-												message: "Please enter at least 3 characters"
-											},
-											validate: (value) => {
-												return value === passwordRef.current || "The passwords does not match 🤦🏼‍♂️"
-											}
-										})}
 									/>
-									{errors.passwordConfirm && <p className="invalid">{errors.passwordConfirm.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Button
@@ -110,24 +113,18 @@ const SignupPage = () => {
 									type="submit"
 								>
 									{loading
-										? "Creating account..."
-										: "Create Account"}
+										? "Updating profile..."
+										: "Save"}
 								</Button>
 							</Form>
 
-							{/* <div className="text-center">
-								<Link to="/forgot-password">Forgot Password?</Link>
-							</div> */}
 						</Card.Body>
 					</Card>
 
-					<div className="text-center mt-3">
-						Already have an account? <Link to="/login">Log In</Link>
-					</div>
 				</Col>
 			</Row>
 		</Container>
 	)
 }
 
-export default SignupPage
+export default UpdateProfile

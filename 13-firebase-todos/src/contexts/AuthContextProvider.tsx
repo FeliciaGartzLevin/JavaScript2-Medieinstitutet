@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
-	User,
 	UserCredential,
 	createUserWithEmailAndPassword,
-	onAuthStateChanged,
 	signInWithEmailAndPassword,
+	onAuthStateChanged,
+	User,
 	signOut,
 } from 'firebase/auth'
 import { createContext, useEffect, useState } from 'react'
+import SyncLoader from 'react-spinners/SyncLoader'
 import { auth } from '../services/firebase'
 
 type AuthContextType = {
@@ -15,11 +16,15 @@ type AuthContextType = {
 	login: (email: string, password: string) => Promise<UserCredential>
 	logout: () => Promise<void>
 	signup: (email: string, password: string) => Promise<UserCredential>
+	// reloadUser: ?
+	// resetPassword: ?
+	// setEmail: ?
+	// setDisplayName: ?
+	// setPassword: ?
+	// setPhotoUrl: ?
 	userEmail: string | null
-	isLoggedIn: boolean
-	isLoading: boolean
-	// authStateErrorMsg: string | null
-
+	userName: string | null
+	userPhotoUrl: string | null
 }
 
 // This creates the actual context and sets the context's initial/default value
@@ -31,18 +36,16 @@ type AuthContextProps = {
 
 const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
+	const [loading, setLoading] = useState(true)
 	const [userEmail, setUserEmail] = useState<string | null>(null)
-	const [isLoggedIn, setIsLoggedIn] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
-	console.log('isLoggedIn:', isLoggedIn)
+	const [userName, setUserName] = useState<string | null>(null)
+	const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null)
 
 	const login = (email: string, password: string) => {
-		setIsLoading(true)
 		return signInWithEmailAndPassword(auth, email, password)
 	}
 
 	const logout = () => {
-		setIsLoggedIn(false)
 		return signOut(auth)
 	}
 
@@ -50,25 +53,41 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 		return createUserWithEmailAndPassword(auth, email, password)
 	}
 
+	const reloadUser = async () => {
+	}
+
+	const resetPassword = (email: string) => {
+	}
+
+	const setEmail = (email: string) => {
+	}
+
+	const setPassword = (password: string) => {
+	}
+
+	const setDisplayName = (name: string) => {
+	}
+
+	const setPhotoUrl = (name: string) => {
+	}
+
 	// add auth-state observer here (somehow... 😈)
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			if (!currentUser) return
-			setCurrentUser(currentUser)
-			setIsLoggedIn(true)
-			setIsLoading(false)
-			console.log('onAuthStateChanged to currentUser:', currentUser)
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			setCurrentUser(user)
 
+			if (user) {
+				// User is logged in
+				setUserEmail(user.email)
+			} else {
+				// No user is logged in
+				setUserEmail(null)
+			}
+			setLoading(false)
 		})
 
-		return () => {
-			setIsLoading(true)
-			setIsLoggedIn(false)
-			unsubscribe
-			setIsLoading(false)
-		}
-
-	}, [onAuthStateChanged])
+		return unsubscribe
+	}, [])
 
 	return (
 		<AuthContext.Provider value={{
@@ -77,11 +96,16 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 			logout,
 			signup,
 			userEmail,
-			isLoggedIn,
-			isLoading,
-			// authStateErrorMsg
+			userName,
+			userPhotoUrl,
 		}}>
-			{children}
+			{loading ? (
+				<div id="initial-loader">
+					<SyncLoader color={'#888'} size={15} speedMultiplier={1.1} />
+				</div>
+			) : (
+				<>{children}</>
+			)}
 		</AuthContext.Provider>
 	)
 }

@@ -1,5 +1,6 @@
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 import ListGroup from "react-bootstrap/ListGroup"
+import Container from "react-bootstrap/Container"
 import { Link } from "react-router-dom"
 import { toast } from 'react-toastify'
 import TodoForm from '../components/TodoForm'
@@ -31,7 +32,7 @@ const TodosPage = () => {
 	}
 
 	return (
-		<>
+		<Container className="py-3">
 			<div className="d-flex justify-content-between align-items-start">
 				<h1 className="mb-3">Todos</h1>
 			</div>
@@ -50,12 +51,10 @@ const TodosPage = () => {
 							className={todo.completed ? "done" : ""}
 							to={`/todos/${todo._id}`}
 						>
-							<div className="d-flex justify-content-between align-items-center">
-								{todo.title && <span className="todo-title">{todo.title}</span>}
-								{todo.created_at && <span className="small text-muted created">
-									{firebaseTimestampToString(todo.created_at)}
-								</span>}
-							</div>
+							{todo.title && <span className="todo-title">{todo.title}</span>}
+							{todo.created_at && <span className="created">
+								{firebaseTimestampToString(todo.created_at)}
+							</span>}
 						</ListGroup.Item>
 					))}
 				</ListGroup>
@@ -64,7 +63,7 @@ const TodosPage = () => {
 			{todos && todos.length === 0 && (
 				<p>Yayyy, you have 0 todos to do</p>
 			)}
-		</>
+		</Container>
 	)
 }
 
