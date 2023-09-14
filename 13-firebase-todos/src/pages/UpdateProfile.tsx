@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col'
 import Container from "react-bootstrap/Container"
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
+import Image from 'react-bootstrap/Image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useAuth from '../hooks/useAuth'
@@ -17,6 +18,7 @@ import { UpdateProfileFormData } from '../types/User.types'
 const UpdateProfile = () => {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
+	const anonymousImg = 'https://www.pngitem.com/pimgs/m/522-5220445_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'
 	const {
 		currentUser,
 		reloadUser,
@@ -24,6 +26,7 @@ const UpdateProfile = () => {
 		setEmail,
 		setPassword,
 		setPhotoUrl,
+		userPhotoUrl,
 	} = useAuth()
 	const { handleSubmit, register, watch, formState: { errors } } = useForm<UpdateProfileFormData>({
 		defaultValues: {
@@ -61,7 +64,6 @@ const UpdateProfile = () => {
 			// Only upload a photo if one has been selected
 			if (data.photoFile.length) {
 				const photo = data.photoFile[0]
-				console.log("Would upload photo...", photo)
 
 				// create a reference to upload the file to
 				// example: "photos/3PjBWeCaZmfasyz4jTEURhnFtI83/space.jpg"
@@ -117,6 +119,11 @@ const UpdateProfile = () => {
 		}
 	}
 
+	const handleDelProfileImg = async () => {
+		await setPhotoUrl('')
+		reloadUser()
+	}
+
 	return (
 		<Container className="py-3 center-y">
 			<Row>
@@ -126,6 +133,27 @@ const UpdateProfile = () => {
 							<Card.Title className="mb-3">Update Profile</Card.Title>
 
 							{errorMessage && (<Alert variant="danger">{errorMessage}</Alert>)}
+							<Container >
+								<Row>
+									<Col className='d-flex justify-content-center mb-2'>
+										<Image
+											src={userPhotoUrl ?? anonymousImg}
+											height={100}
+											width={100}
+											alt={userPhotoUrl ? 'Profile image' : 'Anonymous profile image'}
+											fluid
+											roundedCircle />
+									</Col>
+								</Row>
+								<Row>
+									<Col className='d-flex justify-content-center'>
+										<Button
+											onClick={handleDelProfileImg}
+										>Delete image
+										</Button>
+									</Col>
+								</Row>
+							</Container>
 
 							<Form onSubmit={handleSubmit(onUpdateProfile)}>
 								{/*

@@ -27,6 +27,7 @@ const Navigation = () => {
 							<Nav.Link as={NavLink} end to="/todos">Todos</Nav.Link>
 
 							<NavDropdown
+								align="end"
 								title={
 									userPhotoUrl
 										? <Image
@@ -41,7 +42,7 @@ const Navigation = () => {
 							>
 								<NavDropdown.Item as={NavLink} to="/update-profile">Update Profile</NavDropdown.Item>
 								<NavDropdown.Divider />
-								<NavDropdown.Item as={NavLink} to="/logout">Logout</NavDropdown.Item>
+								<NavDropdown.Item as={NavLink} to="/logout">Log out</NavDropdown.Item>
 							</NavDropdown>
 						</>) : (<>
 							{/* No user is logged in */}
