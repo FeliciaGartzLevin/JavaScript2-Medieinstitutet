@@ -12,9 +12,9 @@ export type ForgotPasswordFormData = {
 
 export type UpdateProfileFormData = {
 	name: string
+	photoFile: FileList
 	photoUrl: string
 	email: string
 	password: string
 	passwordConfirm: string
-
 }

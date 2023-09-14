@@ -35,6 +35,9 @@ const UpdateProfile = () => {
 	const passwordRef = useRef("")
 	passwordRef.current = watch('password')
 
+	const photoFileRef = useRef<FileList | null>(null)
+	photoFileRef.current = watch("photoFile")
+
 	const onUpdateProfile: SubmitHandler<UpdateProfileFormData> = async (data) => {
 		// Clear any previous error state
 		setErrorMessage(null)
@@ -50,11 +53,18 @@ const UpdateProfile = () => {
 				await setDisplayName(data.name)
 			}
 
+			// Only upload a photo if one has been selected
+			if (data.photoFile.length) {
+				console.log("Would upload photo...", data.photoFile[0])
+			}
+
+			/*
 			// Update photoUrl *ONLY* if it has changed
 			if (data.photoUrl !== (currentUser?.photoURL ?? "")) {
 				console.log("Updating photo url...")
 				await setPhotoUrl(data.photoUrl)
 			}
+			*/
 
 			// Update email *ONLY* if it has changed
 			if (data.email !== (currentUser?.email ?? "")) {
@@ -117,14 +127,21 @@ const UpdateProfile = () => {
 									{errors.name && <p className="invalid">{errors.name.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
-								<Form.Group controlId="photoURL" className="mb-3">
-									<Form.Label>Photo URL</Form.Label>
+								<Form.Group controlId="photo" className="mb-3">
+									<Form.Label>Photo</Form.Label>
 									<Form.Control
-										placeholder="https://www.chiquita.com/Bananana.jpg"
-										type="url"
-										{...register('photoUrl')}
+										type="file"
+										accept="image/gif,image/jpeg,image/png,image/webp"
+										{...register('photoFile')}
 									/>
-									{errors.photoUrl && <p className="invalid">{errors.photoUrl.message ?? "Invalid value"}</p>}
+									{errors.photoFile && <p className="invalid">{errors.photoFile.message ?? "Invalid value"}</p>}
+									<Form.Text>{photoFileRef.current && photoFileRef.current.length > 0 && (
+										<span>
+											{photoFileRef.current[0].name}
+											{' '}
+											({Math.round(photoFileRef.current[0].size / 1024)} kB)
+										</span>
+									)}</Form.Text>
 								</Form.Group>
 
 								<Form.Group controlId="email" className="mb-3">
