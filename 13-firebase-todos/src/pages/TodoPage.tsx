@@ -1,18 +1,21 @@
 import { doc, deleteDoc } from 'firebase/firestore'
 import { useState } from "react"
-import { toast } from 'react-toastify'
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
+import Image from "react-bootstrap/Image"
 import { Link, useNavigate, useParams } from "react-router-dom"
+import { toast } from 'react-toastify'
 import ConfirmationModal from "../components/ConfirmationModal"
+import useAuth from '../hooks/useAuth'
 import useGetTodo from "../hooks/useGetTodo"
 import { todosCol } from '../services/firebase'
-import { firebaseTimestampToString } from '../helpers/time'
+import imgAccessDenied from '../assets/images/access-denied-gandalf.jpg'
 
 const TodoPage = () => {
 	const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 	const navigate = useNavigate()
 	const { id } = useParams()
+	const { currentUser } = useAuth()
 
 	const documentId = id as string
 
@@ -31,7 +34,8 @@ const TodoPage = () => {
 		// 🥂
 		toast.success("💣 Todo deleted")
 
-		// Redirect user to todos list (and replace the current history entry for this page)
+		// Redirect user to todos list
+		// (and replace the current history entry for this page)
 		navigate('/todos', {
 			replace: true,
 		})
@@ -39,6 +43,18 @@ const TodoPage = () => {
 
 	if (loading || !todo) {
 		return <p>Loading todo...</p>
+	}
+
+	if (todo && todo.uid !== currentUser?.uid) {
+		return (
+			<Container className="py-3">
+				<Image
+					src={imgAccessDenied}
+					fluid
+					alt="Gandalf from Lord of the Rings saying 'Access Denied'"
+				/>
+			</Container>
+		)
 	}
 
 	return (
@@ -51,21 +67,8 @@ const TodoPage = () => {
 				<strong>Status:</strong>{" "}
 				{todo.completed ? "Completed" : "Not completed"}
 			</p>
-			<p>
-				Created at&nbsp;
-				<span className="small text-muted created">
-					{firebaseTimestampToString(todo.created_at)}
-				</span>
-			</p>
 
 			<div className="buttons mb-3">
-				<Button
-					variant="success"
-					onClick={() => console.log("Would toggle todo")}
-				>
-					Toggle
-				</Button>
-
 				<Link to={`/todos/${id}/edit`}>
 					<Button variant="warning">Edit</Button>
 				</Link>

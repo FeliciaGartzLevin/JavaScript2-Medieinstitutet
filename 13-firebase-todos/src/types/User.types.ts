@@ -6,6 +6,15 @@ export type SignUpCredentials = {
 
 export type LoginCredentials = Omit<SignUpCredentials, 'passwordConfirm'>
 
+export type ForgotPasswordFormData = {
+	email: string
+}
+
 export type UpdateProfileFormData = {
-	// lol
+	name: string
+	photoUrl: string
+	email: string
+	password: string
+	passwordConfirm: string
+
 }

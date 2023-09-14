@@ -11,6 +11,7 @@ import SignupPage from './pages/SignupPage'
 import TodoPage from './pages/TodoPage'
 import TodosPage from './pages/TodosPage'
 import UpdateProfile from './pages/UpdateProfile'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import './assets/scss/App.scss'
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
 			<Routes>
 				{/* Guest Routes */}
 				<Route path="*" element={<NotFound />} />
+				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/logout" element={<LogoutPage />} />
 				<Route path="/signup" element={<SignupPage />} />

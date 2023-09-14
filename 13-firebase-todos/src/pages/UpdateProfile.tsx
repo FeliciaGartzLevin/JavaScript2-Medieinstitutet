@@ -8,14 +8,28 @@ import Container from "react-bootstrap/Container"
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import useAuth from '../hooks/useAuth'
 import { UpdateProfileFormData } from '../types/User.types'
 
 const UpdateProfile = () => {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
-	const { handleSubmit, register, watch, formState: { errors } } = useForm<UpdateProfileFormData>()
-	const { signup } = useAuth()
+	const {
+		currentUser,
+		reloadUser,
+		setDisplayName,
+		setEmail,
+		setPassword,
+		setPhotoUrl,
+	} = useAuth()
+	const { handleSubmit, register, watch, formState: { errors } } = useForm<UpdateProfileFormData>({
+		defaultValues: {
+			email: currentUser?.email ?? "",
+			name: currentUser?.displayName ?? "",
+			photoUrl: currentUser?.photoURL ?? "",
+		}
+	})
 
 	// Watch the current value of `password` form field
 	const passwordRef = useRef("")
@@ -31,16 +45,38 @@ const UpdateProfile = () => {
 			setLoading(true)
 
 			// Update displayName *ONLY* if it has changed
+			if (data.name !== (currentUser?.displayName ?? "")) {
+				console.log("Updating display name...")
+				await setDisplayName(data.name)
+			}
+
+			// Update photoUrl *ONLY* if it has changed
+			if (data.photoUrl !== (currentUser?.photoURL ?? "")) {
+				console.log("Updating photo url...")
+				await setPhotoUrl(data.photoUrl)
+			}
 
 			// Update email *ONLY* if it has changed
+			if (data.email !== (currentUser?.email ?? "")) {
+				console.log("Updating email...")
+				await setEmail(data.email)
+			}
 
 			// Update password *ONLY* if the user has provided a new password to set
+			if (data.password) {
+				console.log("Updating password...")
+				await setPassword(data.password)
+			}
 
 			// Reload user data
+			await reloadUser()
 
 			// Show success toast 🥂
+			toast.success("Profile successfully updated")
 
 			// Enable update-button again
+			setLoading(false)
+			console.log("All ok 👍🏻👍🏻👍🏻!")
 
 		} catch (error) {
 			if (error instanceof FirebaseError) {
@@ -71,7 +107,14 @@ const UpdateProfile = () => {
 									<Form.Control
 										placeholder="Sean Banan"
 										type="text"
+										{...register('name', {
+											minLength: {
+												value: 3,
+												message: "If you have a name, it has to be at least 3 characters long"
+											}
+										})}
 									/>
+									{errors.name && <p className="invalid">{errors.name.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Form.Group controlId="photoURL" className="mb-3">
@@ -79,7 +122,9 @@ const UpdateProfile = () => {
 									<Form.Control
 										placeholder="https://www.chiquita.com/Bananana.jpg"
 										type="url"
+										{...register('photoUrl')}
 									/>
+									{errors.photoUrl && <p className="invalid">{errors.photoUrl.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Form.Group controlId="email" className="mb-3">
@@ -87,7 +132,11 @@ const UpdateProfile = () => {
 									<Form.Control
 										placeholder="snelhest2000@horsemail.com"
 										type="email"
+										{...register('email', {
+											required: "You have to enter an email",
+										})}
 									/>
+									{errors.email && <p className="invalid">{errors.email.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Form.Group controlId="password" className="mb-3">
@@ -95,7 +144,14 @@ const UpdateProfile = () => {
 									<Form.Control
 										type="password"
 										autoComplete="new-password"
+										{...register('password', {
+											minLength: {
+												value: 3,
+												message: "Please enter at least 3 characters"
+											},
+										})}
 									/>
+									{errors.password && <p className="invalid">{errors.password.message ?? "Invalid value"}</p>}
 									<Form.Text>At least 6 characters</Form.Text>
 								</Form.Group>
 
@@ -104,7 +160,17 @@ const UpdateProfile = () => {
 									<Form.Control
 										type="password"
 										autoComplete="off"
+										{...register('passwordConfirm', {
+											minLength: {
+												value: 3,
+												message: "Please enter at least 3 characters"
+											},
+											validate: (value) => {
+												return !passwordRef.current || value === passwordRef.current || "The passwords does not match 🤦🏼‍♂️"
+											}
+										})}
 									/>
+									{errors.passwordConfirm && <p className="invalid">{errors.passwordConfirm.message ?? "Invalid value"}</p>}
 								</Form.Group>
 
 								<Button

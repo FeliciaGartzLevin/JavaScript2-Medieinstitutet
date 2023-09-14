@@ -1,19 +1,21 @@
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
-import ListGroup from "react-bootstrap/ListGroup"
 import Container from "react-bootstrap/Container"
+import ListGroup from "react-bootstrap/ListGroup"
 import { Link } from "react-router-dom"
 import { toast } from 'react-toastify'
 import TodoForm from '../components/TodoForm'
+import { firebaseTimestampToString } from '../helpers/time'
+import useAuth from '../hooks/useAuth'
 import useGetTodos from '../hooks/useGetTodos'
 import { newTodosCol } from '../services/firebase'
 import { TodoFormData } from "../types/Todo.types"
-import { firebaseTimestampToString } from '../helpers/time'
 
 const TodosPage = () => {
+	const { currentUser } = useAuth()
 	const {
 		data: todos,
 		loading
-	} = useGetTodos()
+	} = useGetTodos(currentUser?.uid)
 
 	// Create a new todo in the API
 	const addTodo = async (data: TodoFormData) => {
@@ -23,6 +25,7 @@ const TodosPage = () => {
 		// Set the contents of the document
 		await setDoc(docRef, {
 			...data,
+			uid: currentUser?.uid,
 			created_at: serverTimestamp(),
 			updated_at: serverTimestamp(),
 		})
@@ -51,10 +54,12 @@ const TodosPage = () => {
 							className={todo.completed ? "done" : ""}
 							to={`/todos/${todo._id}`}
 						>
-							{todo.title && <span className="todo-title">{todo.title}</span>}
-							{todo.created_at && <span className="created">
-								{firebaseTimestampToString(todo.created_at)}
-							</span>}
+							<span className="todo-title">{todo.title}</span>
+							<span className="created">
+								{todo.created_at
+									? firebaseTimestampToString(todo.created_at)
+									: "Saving..."}
+							</span>
 						</ListGroup.Item>
 					))}
 				</ListGroup>

@@ -4,8 +4,9 @@ export type Todo = {
 	_id: string
 	title: string
 	completed: boolean
-	created_at: Timestamp
-	updated_at: Timestamp
+	uid: string
+	created_at: Timestamp,
+	updated_at: Timestamp,
 }
 export type NewTodo = Omit<Todo, "_id">
 export type PartialTodo = Partial<Todo>
