@@ -1,4 +1,5 @@
 import { FirebaseError } from 'firebase/app'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { useRef, useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
@@ -10,6 +11,7 @@ import Row from 'react-bootstrap/Row'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useAuth from '../hooks/useAuth'
+import { storage } from '../services/firebase'
 import { UpdateProfileFormData } from '../types/User.types'
 
 const UpdateProfile = () => {
@@ -27,7 +29,6 @@ const UpdateProfile = () => {
 		defaultValues: {
 			email: currentUser?.email ?? "",
 			name: currentUser?.displayName ?? "",
-			photoUrl: currentUser?.photoURL ?? "",
 		}
 	})
 
@@ -37,6 +38,10 @@ const UpdateProfile = () => {
 
 	const photoFileRef = useRef<FileList | null>(null)
 	photoFileRef.current = watch("photoFile")
+
+	if (!currentUser) {
+		return <p>Error, error, error!</p>
+	}
 
 	const onUpdateProfile: SubmitHandler<UpdateProfileFormData> = async (data) => {
 		// Clear any previous error state
@@ -48,26 +53,40 @@ const UpdateProfile = () => {
 			setLoading(true)
 
 			// Update displayName *ONLY* if it has changed
-			if (data.name !== (currentUser?.displayName ?? "")) {
+			if (data.name !== (currentUser.displayName ?? "")) {
 				console.log("Updating display name...")
 				await setDisplayName(data.name)
 			}
 
 			// Only upload a photo if one has been selected
 			if (data.photoFile.length) {
-				console.log("Would upload photo...", data.photoFile[0])
-			}
+				const photo = data.photoFile[0]
+				console.log("Would upload photo...", photo)
 
-			/*
-			// Update photoUrl *ONLY* if it has changed
-			if (data.photoUrl !== (currentUser?.photoURL ?? "")) {
-				console.log("Updating photo url...")
-				await setPhotoUrl(data.photoUrl)
+				// create a reference to upload the file to
+				// example: "photos/3PjBWeCaZmfasyz4jTEURhnFtI83/space.jpg"
+				const fileRef = ref(storage, `photos/${currentUser.uid}/${photo.name}`)
+
+				try {
+					// upload photo to fileRef
+					const uploadResult = await uploadBytes(fileRef, photo)
+
+					// get download url to uploaded file
+					const photoUrl = await getDownloadURL(uploadResult.ref)
+
+					console.log("Photo successfully uploaded, download url is: " + photoUrl)
+
+					// set download url as the users photoURL
+					await setPhotoUrl(photoUrl)
+
+				} catch (e) {
+					console.log("Upload failed", e)
+					setErrorMessage("Upload failed!")
+				}
 			}
-			*/
 
 			// Update email *ONLY* if it has changed
-			if (data.email !== (currentUser?.email ?? "")) {
+			if (data.email !== (currentUser.email ?? "")) {
 				console.log("Updating email...")
 				await setEmail(data.email)
 			}
@@ -101,7 +120,7 @@ const UpdateProfile = () => {
 	return (
 		<Container className="py-3 center-y">
 			<Row>
-				<Col md={{ span: 6, offset: 3 }}>
+				<Col md={{ span: 8, offset: 2 }}>
 					<Card>
 						<Card.Body>
 							<Card.Title className="mb-3">Update Profile</Card.Title>
