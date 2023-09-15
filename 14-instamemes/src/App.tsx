@@ -33,7 +33,9 @@ const App = () => {
 				} />
 			</Routes>
 
+
 			<ToastContainer
+				autoClose={1500}
 				theme='colored'
 			/>
 		</div>
