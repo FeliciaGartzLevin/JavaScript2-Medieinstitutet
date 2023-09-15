@@ -75,7 +75,7 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 		setUserEmail(auth.currentUser.email)
 		setUserPhotoUrl(auth.currentUser.photoURL)
 
-		console.log("Reloaded user ☕️", auth.currentUser)
+		// console.log("Reloaded user ☕️", auth.currentUser)
 		return true
 	}
 
@@ -100,11 +100,9 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 		return updateProfile(currentUser, { displayName })
 	}
 
-	const setPhotoUrl = async (photoURL: string) => {
+	const setPhotoUrl = (photoURL: string) => {
 		if (!currentUser) { throw new Error("Current User is null!") }
-		const updateProfileValue = await updateProfile(currentUser, { photoURL })
-		console.log('value of photoURL:', photoURL)
-		return updateProfileValue
+		return updateProfile(currentUser, { photoURL })
 	}
 
 	// add auth-state observer here (somehow... 😈)
