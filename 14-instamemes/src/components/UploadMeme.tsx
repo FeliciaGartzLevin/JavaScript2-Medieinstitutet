@@ -3,16 +3,22 @@ import Image from 'react-bootstrap/Image'
 import classNames from 'classnames'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'react-toastify'
+import imgAccept from '../assets/images/accept.gif'
 import imgDrop from '../assets/images/drop.gif'
+import imgReject from '../assets/images/reject.gif'
 
 const UploadMeme = () => {
+	// const uploadMeme = useUploadMeme()
+
 	// Drop it like it's hot 🔥
 	const onDrop = useCallback((acceptedFiles: File[]) => {
 		if (!acceptedFiles.length) {
 			toast.warning("Y WOULD U DO STUFF LIKE DAT?!")
 			return
 		}
-		console.log("🎤:", acceptedFiles)
+
+		// trigger upload of the dropped meme
+		// uploadMeme.upload(acceptedFiles[0])
 	}, [])
 
 	const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -38,12 +44,17 @@ const UploadMeme = () => {
 
 			<div className="indicator">
 				{isDragActive
-					? <Image
+					? isDragAccept
+						? <Image
+							src={imgAccept}
+							fluid />
+						: <Image
+							src={imgReject}
+							fluid />
+					: <Image
 						src={imgDrop}
-						alt="Drop your files here"
-						title="Drop it like it's hawt!"
-						fluid />
-					: <p>All Your Memes Are Belong To Me</p>}
+						className="w-50"
+						fluid />}
 			</div>
 		</div>
 	)
